@@ -104,7 +104,7 @@ export function MaterialCard({ material }: MaterialCardProps) {
       </CardHeader>
       
       <CardContent className="p-5 pt-3 flex-1">
-        <p className={`text-sm text-zinc-500 ${isDeveloper ? '' : 'line-clamp-2'}`}>
+        <p className="text-sm text-zinc-500 line-clamp-2">
           {material.description}
         </p>
         <div className="mt-4 flex flex-wrap gap-1.5">
