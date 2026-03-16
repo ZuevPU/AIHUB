@@ -15,7 +15,7 @@ export function Footer() {
               <span className="text-lg tracking-tight">ИИ Каталог</span>
             </Link>
             <p className="text-sm text-zinc-500 mt-2">
-              Современная база знаний ИИ-инструментов, промптов и агентов для вашей продуктивности.
+              База знаний ИИ-инструментов, промптов и агентов для вашей продуктивности.
             </p>
           </div>
           <div>
@@ -32,15 +32,14 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-zinc-500">
               <li><Link to="/catalog?type=tool" className="hover:text-zinc-900 transition-colors">Инструменты</Link></li>
               <li><Link to="/catalog?type=prompt" className="hover:text-zinc-900 transition-colors">Промпты</Link></li>
-              <li><Link to="/catalog?type=agent" className="hover:text-zinc-900 transition-colors">Агенты</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="font-medium text-zinc-900 mb-4">О проекте</h3>
             <ul className="space-y-2 text-sm text-zinc-500">
-              <li><a href="#" className="hover:text-zinc-900 transition-colors">О нас</a></li>
-              <li><a href="#" className="hover:text-zinc-900 transition-colors">Контакты</a></li>
-              <li><a href="#" className="hover:text-zinc-900 transition-colors">Политика конфиденциальности</a></li>
+              <li><a href="https://mashuk.online/#rec1253200716" target="_blank" rel="noreferrer noopener" className="hover:text-zinc-900 transition-colors">О нас</a></li>
+              <li><a href="https://mashuk.online/#rec1249915131" target="_blank" rel="noreferrer noopener" className="hover:text-zinc-900 transition-colors">Контакты</a></li>
+              <li><a href="http://mashuk.online/privacypolicy" target="_blank" rel="noreferrer noopener" className="hover:text-zinc-900 transition-colors">Политика конфиденциальности</a></li>
             </ul>
           </div>
         </div>

@@ -6,10 +6,11 @@ import { cn } from '@/lib/utils';
 
 interface PromptCopyButtonProps {
   text: string;
+  label?: string;
   className?: string;
 }
 
-export function PromptCopyButton({ text, className }: PromptCopyButtonProps) {
+export function PromptCopyButton({ text, label = 'Скопировать промпт', className }: PromptCopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -37,7 +38,7 @@ export function PromptCopyButton({ text, className }: PromptCopyButtonProps) {
       ) : (
         <>
           <Copy className="h-4 w-4" />
-          <span>Скопировать промпт</span>
+          <span>{label}</span>
         </>
       )}
     </Button>

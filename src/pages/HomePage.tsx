@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Wrench, MessageSquare, Bot, PenTool, Briefcase, Palette, LineChart, Code, Link as LinkIcon } from 'lucide-react';
+import { Sparkles, Wrench, MessageSquare, PenTool, Briefcase, Palette, Code } from 'lucide-react';
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid';
 
 export function HomePage() {
@@ -21,9 +21,9 @@ export function HomePage() {
             <span className="text-zinc-500">для работы с ИИ</span>
           </h1>
           <p className="max-w-2xl text-lg text-zinc-600 mb-10">
-            Каталог проверенных промптов, ИИ-агентов и инструментов для решения реальных задач в дизайне, разработке, управлении.
+            Каталог проверенных промптов и инструментов для решения реальных задач в дизайне, разработке, управлении.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <button 
               onClick={() => navigate('/catalog')}
               className="inline-flex h-12 items-center justify-center rounded-lg bg-zinc-900 px-8 text-sm font-medium text-white transition-colors hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950"
@@ -48,7 +48,7 @@ export function HomePage() {
             <p className="mt-4 text-lg text-zinc-600">Выберите нужный тип материалов для работы</p>
           </div>
           
-          <BentoGrid className="max-w-5xl mx-auto">
+          <BentoGrid className="max-w-2xl mx-auto grid-cols-1 md:grid-cols-2">
             <BentoGridItem
               title="Обзор ИИ инструментов"
               description="Каталог нейросетей и сервисов для решения различных задач: от генерации текста до создания видео."
@@ -65,14 +65,6 @@ export function HomePage() {
               className="md:col-span-1"
               onClick={() => navigate('/catalog?type=prompt')}
             />
-            <BentoGridItem
-              title="Агенты"
-              description="Автономные AI-помощники, настроенные на выполнение специфических многошаговых задач."
-              header={<div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-zinc-300 to-zinc-200 border border-zinc-300/50" />}
-              icon={<Bot className="h-5 w-5 text-zinc-500" />}
-              className="md:col-span-1"
-              onClick={() => navigate('/catalog?type=agent')}
-            />
           </BentoGrid>
         </div>
       </section>
@@ -85,50 +77,36 @@ export function HomePage() {
             <p className="mt-4 text-lg text-zinc-600">Найдите решения специально для вашей профессии</p>
           </div>
           
-          <BentoGrid className="max-w-5xl mx-auto md:auto-rows-[14rem]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
             <BentoGridItem
               title="Редактор"
               description="Промпты для написания, редактуры и SEO-оптимизации текстов."
               icon={<PenTool className="h-5 w-5 text-zinc-500" />}
-              className="md:col-span-1"
+              className=""
               onClick={() => navigate('/catalog?category=editor')}
             />
             <BentoGridItem
               title="Менеджер"
               description="Инструменты для планирования, аналитики и управления командой."
               icon={<Briefcase className="h-5 w-5 text-zinc-500" />}
-              className="md:col-span-1"
+              className=""
               onClick={() => navigate('/catalog?category=manager')}
             />
             <BentoGridItem
               title="Дизайнер"
               description="Генерация изображений, концептов и UI-элементов."
               icon={<Palette className="h-5 w-5 text-zinc-500" />}
-              className="md:col-span-1"
+              className=""
               onClick={() => navigate('/catalog?category=designer')}
-            />
-            <BentoGridItem
-              title="Аналитик"
-              description="Обработка данных, построение отчетов и прогнозирование."
-              icon={<LineChart className="h-5 w-5 text-zinc-500" />}
-              className="md:col-span-1"
-              onClick={() => navigate('/catalog?category=analyst')}
             />
             <BentoGridItem
               title="Разработчик"
               description="Код-ревью, написание тестов, архитектура и дебаггинг."
               icon={<Code className="h-5 w-5 text-zinc-500" />}
-              className="md:col-span-1"
+              className=""
               onClick={() => navigate('/catalog?category=developer')}
             />
-            <BentoGridItem
-              title="Полезные ссылки"
-              description="Подборки статей, курсов и документации по работе с AI."
-              icon={<LinkIcon className="h-5 w-5 text-zinc-500" />}
-              className="md:col-span-1"
-              onClick={() => navigate('/catalog?category=useful-links')}
-            />
-          </BentoGrid>
+          </div>
         </div>
       </section>
     </div>

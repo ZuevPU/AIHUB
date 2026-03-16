@@ -28,7 +28,7 @@ export function CatalogPage() {
       setActiveType('all');
     }
 
-    if (categoryParam && ['editor', 'manager', 'designer', 'analyst', 'developer', 'useful-links'].includes(categoryParam)) {
+    if (categoryParam && ['editor', 'manager', 'designer', 'developer'].includes(categoryParam)) {
       setActiveCategory(categoryParam);
     } else {
       setActiveCategory('all');
@@ -64,7 +64,7 @@ export function CatalogPage() {
       if (activeType !== 'all' && material.type !== activeType) return false;
       
       // Category filter
-      if (activeCategory !== 'all' && material.category !== activeCategory) return false;
+      if (activeCategory !== 'all' && !material.categories.includes(activeCategory)) return false;
       
       // Search filter
       if (searchQuery) {
@@ -85,16 +85,13 @@ export function CatalogPage() {
     { id: 'editor', label: 'Редактор' },
     { id: 'manager', label: 'Менеджер' },
     { id: 'designer', label: 'Дизайнер' },
-    { id: 'analyst', label: 'Аналитик' },
     { id: 'developer', label: 'Разработчик' },
-    { id: 'useful-links', label: 'Полезные ссылки' },
   ];
 
   const types: { id: MaterialType | 'all'; label: string }[] = [
     { id: 'all', label: 'Все типы' },
     { id: 'tool', label: 'Инструменты' },
     { id: 'prompt', label: 'Промпты' },
-    { id: 'agent', label: 'Агенты' },
   ];
 
   const hasActiveFilters = activeType !== 'all' || activeCategory !== 'all' || searchQuery !== '';

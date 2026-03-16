@@ -45,7 +45,6 @@ export function Header() {
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <Link to="/catalog?type=tool" className="text-zinc-600 hover:text-zinc-900 transition-colors">Инструменты</Link>
             <Link to="/catalog?type=prompt" className="text-zinc-600 hover:text-zinc-900 transition-colors">Промпты</Link>
-            <Link to="/catalog?type=agent" className="text-zinc-600 hover:text-zinc-900 transition-colors">Агенты</Link>
           </nav>
         </div>
       </div>
