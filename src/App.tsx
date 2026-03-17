@@ -6,6 +6,8 @@ import { HomePage } from '@/pages/HomePage';
 import { CatalogPage } from '@/pages/CatalogPage';
 import { MaterialDetailPage } from '@/pages/MaterialDetailPage';
 import { PromptBuilderPage } from '@/pages/PromptBuilderPage';
+import { PromptBuilderVideoPage } from '@/pages/PromptBuilderVideoPage';
+import { PromptBuilderPresentationPage } from '@/pages/PromptBuilderPresentationPage';
 
 function Layout() {
   return (
@@ -27,6 +29,8 @@ export default function App() {
           <Route index element={<HomePage />} />
           <Route path="catalog" element={<CatalogPage />} />
           <Route path="designer/prompt-builder" element={<PromptBuilderPage />} />
+          <Route path="designer/video-prompt-builder" element={<PromptBuilderVideoPage />} />
+          <Route path="designer/presentation-prompt-builder" element={<PromptBuilderPresentationPage />} />
           <Route path="material/:id" element={<MaterialDetailPage />} />
         </Route>
       </Routes>

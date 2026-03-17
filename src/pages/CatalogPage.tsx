@@ -206,7 +206,10 @@ export function CatalogPage() {
                     Соберите промпт для генерации изображений в Алиса AI и GigaChat.
                   </p>
                 </button>
-                <div className="text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 opacity-60 cursor-not-allowed">
+                <button
+                  onClick={() => navigate('/designer/video-prompt-builder')}
+                  className="text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 transition-all hover:border-amber-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+                >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="rounded-xl p-2.5 bg-amber-100">
                       <Video className="w-6 h-6 text-amber-600" />
@@ -214,11 +217,13 @@ export function CatalogPage() {
                     <h3 className="text-xl font-semibold text-zinc-900">Видео</h3>
                   </div>
                   <p className="text-sm text-zinc-600 leading-relaxed">
-                    Конструктор промптов для генерации видео. Скоро.
+                    Универсальная библиотека параметров для видео: субъект, действие, камера, освещение и др.
                   </p>
-                  <span className="inline-block mt-4 text-xs font-medium text-zinc-400">В разработке</span>
-                </div>
-                <div className="text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 opacity-60 cursor-not-allowed">
+                </button>
+                <button
+                  onClick={() => navigate('/designer/presentation-prompt-builder')}
+                  className="text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 transition-all hover:border-emerald-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+                >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="rounded-xl p-2.5 bg-emerald-100">
                       <Presentation className="w-6 h-6 text-emerald-600" />
@@ -226,10 +231,9 @@ export function CatalogPage() {
                     <h3 className="text-xl font-semibold text-zinc-900">Презентации</h3>
                   </div>
                   <p className="text-sm text-zinc-600 leading-relaxed">
-                    Шаблоны для создания презентаций. Скоро.
+                    Универсальная памятка-билдер: тема, аудитория, структура, стиль, типографика, доступность.
                   </p>
-                  <span className="inline-block mt-4 text-xs font-medium text-zinc-400">В разработке</span>
-                </div>
+                </button>
               </div>
             </div>
           )}
