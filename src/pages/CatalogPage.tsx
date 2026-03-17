@@ -5,7 +5,7 @@ import { materials, MaterialType, Category } from '@/data/materials';
 import { MaterialCard } from '@/components/MaterialCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { X, Filter, Search } from 'lucide-react';
+import { X, Filter, Search, Image, Video, Presentation } from 'lucide-react';
 
 export function CatalogPage() {
   const location = useLocation();
@@ -184,6 +184,55 @@ export function CatalogPage() {
               </div>
             )}
           </div>
+
+          {activeCategory === 'designer' && (
+            <div className="mb-10">
+              <h2 className="text-2xl font-bold text-zinc-900 mb-2">Собери свой промпт</h2>
+              <p className="text-zinc-600 mb-6">
+                Выберите тип контента и соберите идеальный промпт по частям
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <button
+                  onClick={() => navigate('/designer/prompt-builder')}
+                  className="text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 transition-all hover:border-violet-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="rounded-xl p-2.5 bg-violet-100">
+                      <Image className="w-6 h-6 text-violet-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-zinc-900">Изображение</h3>
+                  </div>
+                  <p className="text-sm text-zinc-600 leading-relaxed">
+                    Соберите промпт для генерации изображений в Алиса AI и GigaChat.
+                  </p>
+                </button>
+                <div className="text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 opacity-60 cursor-not-allowed">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="rounded-xl p-2.5 bg-amber-100">
+                      <Video className="w-6 h-6 text-amber-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-zinc-900">Видео</h3>
+                  </div>
+                  <p className="text-sm text-zinc-600 leading-relaxed">
+                    Конструктор промптов для генерации видео. Скоро.
+                  </p>
+                  <span className="inline-block mt-4 text-xs font-medium text-zinc-400">В разработке</span>
+                </div>
+                <div className="text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 opacity-60 cursor-not-allowed">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="rounded-xl p-2.5 bg-emerald-100">
+                      <Presentation className="w-6 h-6 text-emerald-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-zinc-900">Презентации</h3>
+                  </div>
+                  <p className="text-sm text-zinc-600 leading-relaxed">
+                    Шаблоны для создания презентаций. Скоро.
+                  </p>
+                  <span className="inline-block mt-4 text-xs font-medium text-zinc-400">В разработке</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {filteredMaterials.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

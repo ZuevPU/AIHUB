@@ -5,6 +5,7 @@ import { Footer } from '@/components/Footer';
 import { HomePage } from '@/pages/HomePage';
 import { CatalogPage } from '@/pages/CatalogPage';
 import { MaterialDetailPage } from '@/pages/MaterialDetailPage';
+import { PromptBuilderPage } from '@/pages/PromptBuilderPage';
 
 function Layout() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="catalog" element={<CatalogPage />} />
+          <Route path="designer/prompt-builder" element={<PromptBuilderPage />} />
           <Route path="material/:id" element={<MaterialDetailPage />} />
         </Route>
       </Routes>

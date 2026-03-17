@@ -125,7 +125,9 @@ export function MaterialDetailPage() {
               {material.prompts.map((promptText, index) => (
                 <div key={index} className="rounded-2xl border border-zinc-200 bg-white overflow-hidden">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 bg-zinc-50/50 border-b border-zinc-200">
-                    <h3 className="text-lg font-semibold text-zinc-900">Промпт №{index + 1}</h3>
+                    <h3 className="text-lg font-semibold text-zinc-900">
+                      {material.promptLabels?.[index] ?? `Промпт №${index + 1}`}
+                    </h3>
                     <PromptCopyButton text={promptText} label="Скопировать" />
                   </div>
                   <div className="relative p-6 overflow-hidden">
@@ -184,9 +186,25 @@ export function MaterialDetailPage() {
                   className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50"
                 >
                   <ExternalLink className="w-4 h-4" />
-                  Пример выполнения промпта
+                  Пример результата
                 </a>
               )}
+            </div>
+          )}
+          {isPrompt && material.example_url && /\.(png|jpg|jpeg|webp|gif)(\?|$)/i.test(material.example_url) && (
+            <div className="mt-8 rounded-2xl border border-zinc-200 bg-white overflow-hidden">
+              <div className="px-6 py-4 bg-zinc-50/50 border-b border-zinc-200">
+                <h3 className="text-lg font-semibold text-zinc-900">Пример результата</h3>
+              </div>
+              <div className="p-4">
+                <a href={material.example_url} target="_blank" rel="noreferrer" className="block">
+                  <img
+                    src={material.example_url}
+                    alt="Пример результата промпта"
+                    className="w-full max-h-96 object-contain rounded-lg border border-zinc-200"
+                  />
+                </a>
+              </div>
             </div>
           )}
           <AIToolsSection tools={aiToolsForPrompt} />
