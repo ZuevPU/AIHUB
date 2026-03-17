@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Outlet, useLocation } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { HomePage } from '@/pages/HomePage';
@@ -12,6 +13,12 @@ import { PromptBuilderAnalyticsPage } from '@/pages/PromptBuilderAnalyticsPage';
 import { DeveloperSinglePagePage } from '@/pages/DeveloperSinglePagePage';
 
 function Layout() {
+  const { pathname, search } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname, search]);
+
   return (
     <div className="flex min-h-screen flex-col bg-white font-sans text-zinc-950">
       <Header />
