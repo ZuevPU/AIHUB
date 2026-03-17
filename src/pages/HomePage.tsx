@@ -101,7 +101,7 @@ export function HomePage() {
             />
             <BentoGridItem
               title="Разработчик"
-              description="Код-ревью, написание тестов, архитектура и дебаггинг."
+              description="Создание веб-страниц из документов: анонсы мероприятий, итоги педсоветов, портфолио уроков."
               icon={<Code className="h-5 w-5 text-zinc-500" />}
               className=""
               onClick={() => navigate('/catalog?category=developer')}

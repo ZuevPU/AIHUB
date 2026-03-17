@@ -15,7 +15,7 @@ export function Footer() {
               <span className="text-lg tracking-tight">ИИ Каталог</span>
             </Link>
             <p className="text-sm text-zinc-500 mt-2">
-              База знаний ИИ-инструментов, промптов и агентов для вашей продуктивности.
+              База знаний ИИ-инструментов и промптов для вашей продуктивности.
             </p>
           </div>
           <div>

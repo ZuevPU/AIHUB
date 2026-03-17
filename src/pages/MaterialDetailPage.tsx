@@ -149,7 +149,7 @@ export function MaterialDetailPage() {
               </div>
             </div>
           ) : null}
-          {isPrompt && isDeveloper && (
+          {isPrompt && material.id === 'prompt_030' && (
             <div className="mt-8 rounded-2xl border border-zinc-200 bg-white overflow-hidden">
               <div className="px-6 py-4 bg-zinc-50/50 border-b border-zinc-200">
                 <h3 className="text-lg font-semibold text-zinc-900">Алгоритм выполнения</h3>

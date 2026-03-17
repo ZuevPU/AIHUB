@@ -36,7 +36,7 @@ export function Header() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-500" />
             <Input
               type="search"
-              placeholder="Поиск по промптам, агентам..."
+              placeholder="Поиск по промптам и инструментам..."
               className="w-full bg-zinc-100 pl-9 border-transparent focus-visible:bg-white focus-visible:ring-zinc-300"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
