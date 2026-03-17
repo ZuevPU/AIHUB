@@ -2,6 +2,10 @@ export interface PromptBuilderOption {
   id: string;
   text: string;
   isRecommended?: boolean;
+  /** Подсказка: когда использовать, рекомендация */
+  hint?: string;
+  /** Под-опции (специфики) для множественного выбора при выборе родителя */
+  specs?: string[];
 }
 
 export interface PromptBuilderCategory {
@@ -9,6 +13,8 @@ export interface PromptBuilderCategory {
   title: string;
   icon: string;
   options: PromptBuilderOption[];
+  /** Одиночный выбор (только 1 вариант) */
+  singleSelect?: boolean;
 }
 
 export const promptBuilderCategories: PromptBuilderCategory[] = [

@@ -90,7 +90,7 @@ export function PromptBuilderPresentationPage() {
           Конструктор промптов для презентаций
         </h1>
         <p className="text-zinc-600">
-          Универсальная памятка-билдер. Работает в PowerPoint, Google Slides, Canva, Gamma, Beautiful.ai, Tome и при генерации через ИИ
+          Универсальная памятка-билдер. Работает в Gamma, GigaChat и при генерации через ИИ
         </p>
       </div>
 

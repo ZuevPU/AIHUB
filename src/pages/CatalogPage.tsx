@@ -5,7 +5,7 @@ import { materials, MaterialType, Category } from '@/data/materials';
 import { MaterialCard } from '@/components/MaterialCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { X, Filter, Search, Image, Video, Presentation } from 'lucide-react';
+import { X, Filter, Search, Image, Video, Presentation, BarChart3 } from 'lucide-react';
 
 export function CatalogPage() {
   const location = useLocation();
@@ -184,6 +184,31 @@ export function CatalogPage() {
               </div>
             )}
           </div>
+
+          {activeCategory === 'manager' && (
+            <div className="mb-10">
+              <h2 className="text-2xl font-bold text-zinc-900 mb-2">Собери свой промпт</h2>
+              <p className="text-zinc-600 mb-6">
+                Конструктор для анализа данных через ИИ. 3 шага: диагностика → планирование → отчёт
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <button
+                  onClick={() => navigate('/manager/analytics-prompt-builder')}
+                  className="text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 transition-all hover:border-blue-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="rounded-xl p-2.5 bg-blue-100">
+                      <BarChart3 className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-zinc-900">Анализ данных</h3>
+                  </div>
+                  <p className="text-sm text-zinc-600 leading-relaxed">
+                    Роль, тип данных, цель, формат отчёта. Множественный выбор + свой вариант. Этика и безопасность.
+                  </p>
+                </button>
+              </div>
+            </div>
+          )}
 
           {activeCategory === 'designer' && (
             <div className="mb-10">
