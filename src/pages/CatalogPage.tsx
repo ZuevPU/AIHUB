@@ -5,7 +5,7 @@ import { materials, MaterialType, Category } from '@/data/materials';
 import { MaterialCard } from '@/components/MaterialCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { X, Filter, Search, Image, Video, Presentation, BarChart3 } from 'lucide-react';
+import { X, Filter, Search, Image, Video, Presentation, BarChart3, Code } from 'lucide-react';
 
 export function CatalogPage() {
   const location = useLocation();
@@ -204,6 +204,31 @@ export function CatalogPage() {
                   </div>
                   <p className="text-sm text-zinc-600 leading-relaxed">
                     Роль, тип данных, цель, формат отчёта. Множественный выбор + свой вариант. Этика и безопасность.
+                  </p>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {activeCategory === 'developer' && (
+            <div className="mb-10">
+              <h2 className="text-2xl font-bold text-zinc-900 mb-2">Собери свой промпт</h2>
+              <p className="text-zinc-600 mb-6">
+                Разработка одностраничных приложений через ИИ. Qwen Артефакты — инструкция и шаги.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <button
+                  onClick={() => navigate('/developer/single-page-apps')}
+                  className="text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 transition-all hover:border-teal-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="rounded-xl p-2.5 bg-teal-100">
+                      <Code className="w-6 h-6 text-teal-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-zinc-900">Одностраничные приложения</h3>
+                  </div>
+                  <p className="text-sm text-zinc-600 leading-relaxed">
+                    Инструкция по созданию приложений в Qwen Артефакты. HTML/CSS/JS, предпросмотр, развёртывание.
                   </p>
                 </button>
               </div>
