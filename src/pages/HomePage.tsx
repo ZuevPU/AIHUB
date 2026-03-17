@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Wrench, MessageSquare, PenTool, Briefcase, Palette, Code } from 'lucide-react';
-import { BentoGrid, BentoGridItem } from '@/components/BentoGrid';
+import { Sparkles, PenTool, Briefcase, Palette, Code, Image, Video, Presentation, BarChart3 } from 'lucide-react';
+import { BentoGridItem } from '@/components/BentoGrid';
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -40,37 +40,8 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Main Categories Bento */}
-      <section className="py-20 bg-zinc-50">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">Основное</h2>
-            <p className="mt-4 text-lg text-zinc-600">Выберите нужный тип материалов для работы</p>
-          </div>
-          
-          <BentoGrid className="max-w-2xl mx-auto grid-cols-1 md:grid-cols-2">
-            <BentoGridItem
-              title="Обзор ИИ инструментов"
-              description="Каталог нейросетей и сервисов для решения различных задач: от генерации текста до создания видео."
-              header={<div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-zinc-200 to-zinc-100 border border-zinc-200/50" />}
-              icon={<Wrench className="h-5 w-5 text-zinc-500" />}
-              className="md:col-span-1"
-              onClick={() => navigate('/catalog?type=tool')}
-            />
-            <BentoGridItem
-              title="Промпты"
-              description="Библиотека готовых запросов для GigaChat, Алиса, QWEN, DeepSeek и других моделей. Скопируй и используй."
-              header={<div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-zinc-800 to-zinc-900 border border-zinc-800/50" />}
-              icon={<MessageSquare className="h-5 w-5 text-zinc-500" />}
-              className="md:col-span-1"
-              onClick={() => navigate('/catalog?type=prompt')}
-            />
-          </BentoGrid>
-        </div>
-      </section>
-
       {/* Use Cases Bento */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-zinc-50">
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">Примеры использования</h2>
@@ -105,6 +76,54 @@ export function HomePage() {
               icon={<Code className="h-5 w-5 text-zinc-500" />}
               className=""
               onClick={() => navigate('/catalog?category=developer')}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Собери свой промпт */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">Собери свой промпт</h2>
+            <p className="mt-4 text-lg text-zinc-600">Выберите тип контента и соберите идеальный промпт по частям — от изображений до одностраничных приложений</p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 max-w-6xl mx-auto">
+            <BentoGridItem
+              title="Конструктор изображения"
+              description="Генерация изображений в Алиса AI и GigaChat. Соберите промпт по частям."
+              icon={<Image className="h-5 w-5 text-violet-500" />}
+              className="border-violet-200 hover:border-violet-300"
+              onClick={() => navigate('/designer/prompt-builder')}
+            />
+            <BentoGridItem
+              title="Конструктор видео"
+              description="Субъект, действие, камера, освещение — параметры для генерации видео."
+              icon={<Video className="h-5 w-5 text-amber-500" />}
+              className="border-amber-200 hover:border-amber-300"
+              onClick={() => navigate('/designer/video-prompt-builder')}
+            />
+            <BentoGridItem
+              title="Конструктор презентаций"
+              description="Тема, аудитория, структура, стиль, типографика, доступность."
+              icon={<Presentation className="h-5 w-5 text-emerald-500" />}
+              className="border-emerald-200 hover:border-emerald-300"
+              onClick={() => navigate('/designer/presentation-prompt-builder')}
+            />
+            <BentoGridItem
+              title="Конструктор анализа данных"
+              description="3 шага: диагностика → планирование → отчёт. Роль, цель, формат."
+              icon={<BarChart3 className="h-5 w-5 text-blue-500" />}
+              className="border-blue-200 hover:border-blue-300"
+              onClick={() => navigate('/manager/analytics-prompt-builder')}
+            />
+            <BentoGridItem
+              title="Конструктор для разработки"
+              description="Одностраничные приложения в Qwen Артефакты. HTML/CSS/JS, предпросмотр."
+              icon={<Code className="h-5 w-5 text-teal-500" />}
+              className="border-teal-200 hover:border-teal-300"
+              onClick={() => navigate('/developer/single-page-apps')}
             />
           </div>
         </div>
