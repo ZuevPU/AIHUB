@@ -1,4 +1,11 @@
 import { artifactsConfig } from './artifactsConfig';
+import {
+  buildSpaPrompt,
+  getInitialSpaSelections,
+  SPA_DEFAULT_TEMPLATE_OPTIONS,
+  SPA_NEGATIVE_OPTIONS,
+  SPA_QUALITY_OPTIONS,
+} from './promptBuilderSpaConfig';
 
 export interface ArtifactSelections {
   category: string;
@@ -8,77 +15,26 @@ export interface ArtifactSelections {
   options?: Record<string, string>;
 }
 
-const DEFAULT_OPTIONS: Record<string, string> = {
-  topic: 'указанная тема',
-  questionsCount: '10',
-  cardsCount: '20',
-  gridSize: '15x15',
-  events: 'ключевые события',
-  list1: 'первый список',
-  list2: 'второй список',
-  categories: '5 категорий',
-  units: 'основные единицы',
-  ideasCount: '50',
-  wordsCount: '30',
-  piecesCount: '16',
-  metrics: 'ключевые метрики',
-  data: 'пример данных',
-  columns: 'Нужно сделать, В работе, Готово',
-  centralIdea: 'центральная идея',
-  currency: 'монеты',
-  upgrades: '5 улучшений',
-  stages: '5 этапов',
-  plansCount: '3',
-  period: 'месяц',
-  chaptersCount: '10',
-  termsCount: '50',
-  stepsCount: '10',
-  slidesCount: '8',
-  parameters: 'основные параметры',
-  formulas: 'необходимые формулы',
-  inputs: 'входные параметры',
-  quizFormat: 'выбор одного правильного ответа из 4 вариантов',
-  description: 'описание сцены',
-};
+/** @deprecated используйте SPA_DEFAULT_TEMPLATE_OPTIONS из promptBuilderSpaConfig */
+export const DEFAULT_OPTIONS = SPA_DEFAULT_TEMPLATE_OPTIONS;
 
-function getStyleValue(styleId: string): string {
-  const style = artifactsConfig.defaults.styles.find((s) => s.id === styleId);
-  return style ? style.value : 'светлая тема, акцентный цвет синий';
-}
-
+/**
+ * Упрощённая генерация (мета-поля по умолчанию, все quality/negative включены).
+ * Для полного конструктора используйте buildSpaPrompt из promptBuilderSpaConfig.
+ */
 export function generatePrompt(selections: ArtifactSelections): string {
-  const { category, type, style, topic, options = {} } = selections;
-
-  const categoryData = artifactsConfig.categories.find((c) => c.id === category);
-  const typeData = categoryData?.types.find((t) => t.id === type);
-
-  if (!typeData) return 'Ошибка: тип артефакта не найден';
-
-  let prompt = typeData.promptTemplate;
-
-  const merged = { ...DEFAULT_OPTIONS, ...options };
-  const topicValue = topic.trim() || merged.topic;
-  const styleValue = getStyleValue(style);
-
-  prompt = prompt.replace(/\{topic\}/g, topicValue);
-  prompt = prompt.replace(/\{style\}/g, styleValue);
-
-  for (const [key, value] of Object.entries(merged)) {
-    if (key !== 'topic') {
-      prompt = prompt.replace(new RegExp(`\\{${key}\\}`, 'g'), value);
-    }
-  }
-
-  prompt += '\n\nТехнические требования:';
-  prompt += '\n• Единый HTML-файл (HTML + CSS + JS в одном файле)';
-  prompt += '\n• Без внешних зависимостей и библиотек';
-  prompt += '\n• Адаптивность под мобильные устройства';
-  prompt += '\n• Сохранение данных в localStorage (если применимо)';
-  prompt += '\n• Валидация форм (если есть формы)';
-  prompt += '\n• Плавные анимации и переходы';
-  prompt += '\n• Семантическая вёрстка, доступность (ARIA)';
-
-  return prompt;
+  return buildSpaPrompt({
+    category: selections.category,
+    type: selections.type,
+    styleId: selections.style,
+    topic: selections.topic,
+    templateOptions: selections.options ?? {},
+    values: getInitialSpaSelections(),
+    custom: {},
+    qualityIds: SPA_QUALITY_OPTIONS.map((q) => q.id),
+    negativeIds: SPA_NEGATIVE_OPTIONS.map((n) => n.id),
+    enhance: false,
+  });
 }
 
 export function copyToClipboard(text: string): Promise<void> {
@@ -99,3 +55,5 @@ export function randomizeSelections(): ArtifactSelections {
     topic: '',
   };
 }
+
+export { buildSpaPrompt, getInitialSpaSelections } from './promptBuilderSpaConfig';

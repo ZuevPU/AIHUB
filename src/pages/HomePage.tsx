@@ -120,7 +120,7 @@ export function HomePage() {
             />
             <BentoGridItem
               title="Конструктор для разработки"
-              description="Одностраничные приложения в Qwen Артефакты. HTML/CSS/JS, предпросмотр."
+              description="Одностраничные SPA: контекст, параметры типа, техтребования, приёмка. Qwen Артефакты."
               icon={<Code className="h-5 w-5 text-teal-500" />}
               className="border-teal-200 hover:border-teal-300"
               onClick={() => navigate('/developer/single-page-apps')}

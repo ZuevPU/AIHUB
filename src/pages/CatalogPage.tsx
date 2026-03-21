@@ -214,7 +214,8 @@ export function CatalogPage() {
             <div className="mb-10">
               <h2 className="text-2xl font-bold text-zinc-900 mb-2">Собери свой промпт</h2>
               <p className="text-zinc-600 mb-6">
-                Разработка одностраничных приложений через ИИ. Qwen Артефакты — инструкция и шаги.
+                Конструктор промпта: роль, цель, сложность, параметры шаблона, качество и ограничения. Инструкция по Qwen
+                Артефакты — на странице.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <button
@@ -228,7 +229,7 @@ export function CatalogPage() {
                     <h3 className="text-xl font-semibold text-zinc-900">Одностраничные приложения</h3>
                   </div>
                   <p className="text-sm text-zinc-600 leading-relaxed">
-                    Инструкция по созданию приложений в Qwen Артефакты. HTML/CSS/JS, предпросмотр, развёртывание.
+                    Единый промпт под vanilla SPA: задача, техтребования, критерии приёмки. Плюс шаги для Qwen Артефакты.
                   </p>
                 </button>
               </div>
