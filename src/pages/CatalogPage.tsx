@@ -6,6 +6,8 @@ import { MaterialCard } from '@/components/MaterialCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { X, Filter, Search, Image, Video, Presentation, BarChart3, Code } from 'lucide-react';
+import { PageWide } from '@/components/layout/PageContainer';
+import { siteUi } from '@/lib/siteUi';
 
 export function CatalogPage() {
   const location = useLocation();
@@ -97,7 +99,7 @@ export function CatalogPage() {
   const hasActiveFilters = activeType !== 'all' || activeCategory !== 'all' || searchQuery !== '';
 
   return (
-    <div className="container mx-auto px-4 py-12 md:px-6">
+    <PageWide>
       <div className="flex flex-col md:flex-row gap-8">
         {/* Sidebar Filters */}
         <aside className="w-full md:w-64 shrink-0">
@@ -193,8 +195,9 @@ export function CatalogPage() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <button
+                  type="button"
                   onClick={() => navigate('/manager/analytics-prompt-builder')}
-                  className="text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 transition-all hover:border-blue-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+                  className={siteUi.bentoPromptCard}
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="rounded-xl p-2.5 bg-blue-100">
@@ -219,8 +222,9 @@ export function CatalogPage() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <button
+                  type="button"
                   onClick={() => navigate('/developer/single-page-apps')}
-                  className="text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 transition-all hover:border-teal-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+                  className={siteUi.bentoPromptCard}
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="rounded-xl p-2.5 bg-teal-100">
@@ -229,7 +233,7 @@ export function CatalogPage() {
                     <h3 className="text-xl font-semibold text-zinc-900">Одностраничные приложения</h3>
                   </div>
                   <p className="text-sm text-zinc-600 leading-relaxed">
-                    Единый промпт под vanilla SPA: задача, техтребования, критерии приёмки. Плюс шаги для Qwen Артефакты.
+                    Единый промпт разработка страницы простого веб приложения. Плюс шаги для создания цифровых Артефактов.
                   </p>
                 </button>
               </div>
@@ -244,8 +248,9 @@ export function CatalogPage() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <button
+                  type="button"
                   onClick={() => navigate('/designer/prompt-builder')}
-                  className="text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 transition-all hover:border-violet-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+                  className={siteUi.bentoPromptCard}
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="rounded-xl p-2.5 bg-violet-100">
@@ -258,8 +263,9 @@ export function CatalogPage() {
                   </p>
                 </button>
                 <button
+                  type="button"
                   onClick={() => navigate('/designer/video-prompt-builder')}
-                  className="text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 transition-all hover:border-amber-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+                  className={siteUi.bentoPromptCard}
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="rounded-xl p-2.5 bg-amber-100">
@@ -272,8 +278,9 @@ export function CatalogPage() {
                   </p>
                 </button>
                 <button
+                  type="button"
                   onClick={() => navigate('/designer/presentation-prompt-builder')}
-                  className="text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 transition-all hover:border-emerald-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+                  className={siteUi.bentoPromptCard}
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="rounded-xl p-2.5 bg-emerald-100">
@@ -311,6 +318,6 @@ export function CatalogPage() {
           )}
         </main>
       </div>
-    </div>
+    </PageWide>
   );
 }

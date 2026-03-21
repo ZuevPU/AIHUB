@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Copy, Check, RotateCcw, Shuffle, ExternalLink, Shield, Sparkles } from 'lucide-react';
+import { Copy, Check, RotateCcw, Shuffle, ExternalLink, Shield, Sparkles } from 'lucide-react';
 import {
   analyticsPromptSections,
   analyticsVizOptions,
@@ -11,6 +10,10 @@ import {
   getInitialAnalyticsSelections,
 } from '@/data/promptBuilderAnalyticsConfig';
 import { cn } from '@/lib/utils';
+import { siteUi } from '@/lib/siteUi';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { BackLink } from '@/components/layout/BackLink';
+import { WhyHint } from '@/components/layout/WhyHint';
 
 const serviceLinks = [
   { id: 'gigachat', label: 'GigaChat', url: 'https://giga.chat/' },
@@ -21,7 +24,6 @@ const serviceLinks = [
 ] as const;
 
 export function PromptBuilderAnalyticsPage() {
-  const navigate = useNavigate();
   const [selections, setSelections] = useState<Record<string, string>>(getInitialAnalyticsSelections);
   const [customInputs, setCustomInputs] = useState<Record<string, string>>({});
   const [vizIds, setVizIds] = useState<string[]>(() => analyticsVizOptions.map((o) => o.id));
@@ -109,7 +111,7 @@ export function PromptBuilderAnalyticsPage() {
 
   const renderFieldBlock = (field: (typeof analyticsPromptSections)[0]['fields'][0]) => (
     <div key={field.id}>
-      <p className="text-xs font-medium text-zinc-500 uppercase tracking-wide mb-2">{field.label}</p>
+      <p className={siteUi.fieldLabel}>{field.label}</p>
       <div className="flex flex-wrap gap-2 mb-2">
         {field.options.map((opt) => (
           <button
@@ -117,10 +119,11 @@ export function PromptBuilderAnalyticsPage() {
             type="button"
             onClick={() => handleSelect(field.id, opt.text)}
             className={cn(
-              'px-3 py-1.5 rounded-lg text-xs transition-all border text-left',
+              siteUi.chipBase,
+              'text-left',
               getValue(field.id) === opt.text && !customInputs[field.id]?.trim()
-                ? 'border-blue-500 bg-blue-50 text-zinc-900'
-                : 'border-zinc-200 hover:border-zinc-300 bg-white text-zinc-600'
+                ? siteUi.chipOn
+                : siteUi.chipOff
             )}
           >
             {opt.text.length > 52 ? opt.text.slice(0, 52) + '…' : opt.text}
@@ -132,20 +135,14 @@ export function PromptBuilderAnalyticsPage() {
         value={customInputs[field.id] || ''}
         onChange={(e) => handleCustomChange(field.id, e.target.value)}
         placeholder="Свой вариант..."
-        className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
+        className={siteUi.input}
       />
     </div>
   );
 
   return (
-    <div className="container mx-auto px-4 py-8 md:px-6 max-w-6xl">
-      <button
-        onClick={() => navigate('/catalog?category=manager')}
-        className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-zinc-900 mb-6 transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Назад к каталогу
-      </button>
+    <PageContainer>
+      <BackLink to="/catalog?category=manager">Назад к каталогу</BackLink>
 
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl mb-1">
@@ -156,7 +153,7 @@ export function PromptBuilderAnalyticsPage() {
         </p>
       </div>
 
-      <div className="mb-8 rounded-2xl border-2 border-amber-200 bg-amber-50/50 p-5">
+      <div className={cn(siteUi.calloutWarning, 'mb-8')}>
         <div className="flex items-start gap-3">
           <Shield className="w-7 h-7 text-amber-600 shrink-0 mt-0.5" />
           <div className="text-sm text-zinc-800">
@@ -173,33 +170,28 @@ export function PromptBuilderAnalyticsPage() {
           {analyticsPromptSections.map((section) => {
             if (section.id === 'viz') {
               return (
-                <div key={section.id} className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+                <div key={section.id} className={siteUi.sectionCard}>
                   <div className="mb-4">
-                    <h2 className="font-semibold text-zinc-900 text-base flex items-center gap-2">
+                    <h2 className={siteUi.sectionHeading}>
                       <span>{section.icon}</span>
                       {section.label}
                     </h2>
-                    <p className="mt-2 text-sm text-blue-900/90 bg-blue-50/80 rounded-lg px-3 py-2 border border-blue-100">
-                      <span className="font-medium">Зачем это нужно: </span>
-                      {section.why}
-                    </p>
+                    <WhyHint>{section.why}</WhyHint>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {analyticsVizOptions.map((opt) => (
                       <label
                         key={opt.id}
                         className={cn(
-                          'flex items-center gap-2 cursor-pointer text-sm px-3 py-2 rounded-lg border transition-colors',
-                          vizIds.includes(opt.id)
-                            ? 'border-blue-500 bg-blue-50 text-zinc-900'
-                            : 'border-zinc-200 bg-white text-zinc-600'
+                          siteUi.checkboxLabelBase,
+                          vizIds.includes(opt.id) ? siteUi.checkboxOn : siteUi.checkboxOff
                         )}
                       >
                         <input
                           type="checkbox"
                           checked={vizIds.includes(opt.id)}
                           onChange={() => toggleViz(opt.id)}
-                          className="rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+                          className={siteUi.checkboxInput}
                         />
                         {opt.text}
                       </label>
@@ -209,49 +201,41 @@ export function PromptBuilderAnalyticsPage() {
               );
             }
             return (
-              <div key={section.id} className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+              <div key={section.id} className={siteUi.sectionCard}>
                 <div className="mb-4">
-                  <h2 className="font-semibold text-zinc-900 text-base flex items-center gap-2">
+                  <h2 className={siteUi.sectionHeading}>
                     <span>{section.icon}</span>
                     {section.label}
                   </h2>
-                  <p className="mt-2 text-sm text-blue-900/90 bg-blue-50/80 rounded-lg px-3 py-2 border border-blue-100">
-                    <span className="font-medium">Зачем это нужно: </span>
-                    {section.why}
-                  </p>
+                  <WhyHint>{section.why}</WhyHint>
                 </div>
                 <div className="space-y-5">{section.fields.map(renderFieldBlock)}</div>
               </div>
             );
           })}
 
-          <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+          <div className={siteUi.sectionCard}>
             <div className="mb-4">
-              <h2 className="font-semibold text-zinc-900 text-base flex items-center gap-2">
+              <h2 className={siteUi.sectionHeading}>
                 <span>⚫</span>
                 Требования к качеству анализа
               </h2>
-              <p className="mt-2 text-sm text-blue-900/90 bg-blue-50/80 rounded-lg px-3 py-2 border border-blue-100">
-                <span className="font-medium">Зачем это нужно: </span>
-                Дополняют блок «ПРАВИЛА» в промпте — явные критерии качества.
-              </p>
+              <WhyHint>Дополняют блок «ПРАВИЛА» в промпте — явные критерии качества.</WhyHint>
             </div>
             <div className="flex flex-wrap gap-3">
               {ANALYTICS_QUALITY_OPTIONS.map((opt) => (
                 <label
                   key={opt.id}
                   className={cn(
-                    'flex items-center gap-2 cursor-pointer text-sm px-3 py-2 rounded-lg border transition-colors',
-                    qualityIds.includes(opt.id)
-                      ? 'border-blue-500 bg-blue-50 text-zinc-900'
-                      : 'border-zinc-200 bg-white text-zinc-600'
+                    siteUi.checkboxLabelBase,
+                    qualityIds.includes(opt.id) ? siteUi.checkboxOn : siteUi.checkboxOff
                   )}
                 >
                   <input
                     type="checkbox"
                     checked={qualityIds.includes(opt.id)}
                     onChange={() => toggleQuality(opt.id)}
-                    className="rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+                    className={siteUi.checkboxInput}
                   />
                   {opt.text}
                 </label>
@@ -259,33 +243,28 @@ export function PromptBuilderAnalyticsPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+          <div className={siteUi.sectionCard}>
             <div className="mb-4">
-              <h2 className="font-semibold text-zinc-900 text-base flex items-center gap-2">
+              <h2 className={siteUi.sectionHeading}>
                 <span>🚫</span>
                 Исключить
               </h2>
-              <p className="mt-2 text-sm text-blue-900/90 bg-blue-50/80 rounded-lg px-3 py-2 border border-blue-100">
-                <span className="font-medium">Зачем это нужно: </span>
-                Методологические риски и типичные ошибки аналитики.
-              </p>
+              <WhyHint>Методологические риски и типичные ошибки аналитики.</WhyHint>
             </div>
             <div className="flex flex-wrap gap-3">
               {ANALYTICS_NEGATIVE_OPTIONS.map((opt) => (
                 <label
                   key={opt.id}
                   className={cn(
-                    'flex items-center gap-2 cursor-pointer text-sm px-3 py-2 rounded-lg border transition-colors',
-                    negativeIds.includes(opt.id)
-                      ? 'border-blue-500 bg-blue-50 text-zinc-900'
-                      : 'border-zinc-200 bg-white text-zinc-600'
+                    siteUi.checkboxLabelBase,
+                    negativeIds.includes(opt.id) ? siteUi.checkboxOn : siteUi.checkboxOff
                   )}
                 >
                   <input
                     type="checkbox"
                     checked={negativeIds.includes(opt.id)}
                     onChange={() => toggleNegative(opt.id)}
-                    className="rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+                    className={siteUi.checkboxInput}
                   />
                   {opt.text}
                 </label>
@@ -296,55 +275,40 @@ export function PromptBuilderAnalyticsPage() {
 
         <div className="lg:col-span-1">
           <div className="lg:sticky lg:top-24 space-y-4">
-            <div className="rounded-2xl border border-zinc-200 bg-white p-5">
+            <div className={siteUi.sidebarCard}>
               <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                 <h3 className="font-semibold text-zinc-900">Ваш промпт</h3>
                 <div className="flex gap-2">
-                  <button
-                    onClick={handleReset}
-                    className="p-2 rounded-lg text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition-colors"
-                    title="Сбросить"
-                  >
+                  <button type="button" onClick={handleReset} className={siteUi.iconButton} title="Сбросить">
                     <RotateCcw className="w-4 h-4" />
                   </button>
-                  <button
-                    onClick={handleRandomize}
-                    className="p-2 rounded-lg text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition-colors"
-                    title="Случайный выбор"
-                  >
+                  <button type="button" onClick={handleRandomize} className={siteUi.iconButton} title="Случайный выбор">
                     <Shuffle className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
               {enhance && (
-                <p className="text-xs text-blue-800 bg-blue-50 rounded-lg px-3 py-2 mb-2 border border-blue-100">
+                <p className={siteUi.enhanceNote}>
                   Усиление: дополнительный пункт в правилах про устойчивость и ограничения
                 </p>
               )}
 
-              <textarea
-                value={fullPrompt}
-                readOnly
-                rows={18}
-                className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-sm text-zinc-700 resize-y min-h-[400px] focus:outline-none focus:ring-2 focus:ring-zinc-300 whitespace-pre-wrap font-mono"
-              />
+              <textarea value={fullPrompt} readOnly rows={18} className={siteUi.textareaPromptTall} />
 
               <button
                 type="button"
                 onClick={() => setEnhance((e) => !e)}
-                className="w-full mt-3 flex items-center justify-center gap-2 py-3 rounded-xl font-medium border-2 border-blue-200 bg-blue-50 text-blue-950 hover:bg-blue-100 transition-colors"
+                className={cn('w-full mt-3 flex items-center justify-center gap-2', siteUi.secondaryButton)}
               >
                 <Sparkles className="w-5 h-5" />
                 Сделать анализ сильнее
               </button>
 
               <button
+                type="button"
                 onClick={copyToClipboard}
-                className={cn(
-                  'w-full mt-3 flex items-center justify-center gap-2 py-3.5 rounded-xl font-medium transition-all',
-                  copied ? 'bg-emerald-500 text-white' : 'bg-zinc-900 text-white hover:bg-zinc-800'
-                )}
+                className={cn(copied ? siteUi.primaryButtonSuccess : siteUi.primaryButton, 'mt-3')}
               >
                 {copied ? (
                   <>
@@ -363,13 +327,7 @@ export function PromptBuilderAnalyticsPage() {
                 <h3 className="text-sm font-medium text-zinc-900 mb-3">Где использовать?</h3>
                 <div className="flex flex-wrap gap-2">
                   {serviceLinks.map((s) => (
-                    <a
-                      key={s.id}
-                      href={s.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-zinc-300 bg-white text-sm font-medium text-zinc-900 hover:bg-zinc-50 hover:border-zinc-400 transition-colors"
-                    >
+                    <a key={s.id} href={s.url} target="_blank" rel="noreferrer" className={siteUi.linkOutbound}>
                       <ExternalLink className="w-4 h-4" />
                       {s.label}
                     </a>
@@ -380,6 +338,6 @@ export function PromptBuilderAnalyticsPage() {
           </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

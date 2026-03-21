@@ -9,6 +9,8 @@ import { PromptCopyButton } from '@/components/PromptCopyButton';
 import { RelatedCards } from '@/components/RelatedCards';
 import { AIToolsSection } from '@/components/AIToolsSection';
 import { ArrowLeft, Download, ExternalLink, FileText, Wrench, MessageSquare, Bot } from 'lucide-react';
+import { siteUi } from '@/lib/siteUi';
+import { cn } from '@/lib/utils';
 
 const typeIcons = {
   tool: Wrench,
@@ -42,7 +44,7 @@ export function MaterialDetailPage() {
 
   if (!material) {
     return (
-      <div className="container mx-auto px-4 py-24 text-center">
+      <div className={cn(siteUi.page, 'py-24 text-center')}>
         <h1 className="text-2xl font-bold text-zinc-900">Материал не найден</h1>
         <p className="mt-4 text-zinc-500">Возможно, он был удален или перемещен.</p>
         <Button className="mt-8" onClick={() => navigate('/catalog')}>
@@ -78,10 +80,11 @@ export function MaterialDetailPage() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-12 md:px-6 max-w-5xl">
+    <div className={siteUi.page}>
       <button
+        type="button"
         onClick={() => navigate(-1)}
-        className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-zinc-900 mb-8 transition-colors"
+        className={cn(siteUi.backLink, 'mb-8')}
       >
         <ArrowLeft className="w-4 h-4" />
         Назад

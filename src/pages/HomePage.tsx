@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Sparkles, PenTool, Briefcase, Palette, Code, Image, Video, Presentation, BarChart3 } from 'lucide-react';
 import { BentoGridItem } from '@/components/BentoGrid';
 
+const bentoPromptHover = 'hover:shadow-lg hover:border-zinc-300 transition-all';
+
 export function HomePage() {
   const navigate = useNavigate();
 
@@ -94,35 +96,35 @@ export function HomePage() {
               title="Конструктор изображения"
               description="Генерация изображений в Алиса AI и GigaChat. Соберите промпт по частям."
               icon={<Image className="h-5 w-5 text-violet-500" />}
-              className="border-violet-200 hover:border-violet-300"
+              className={bentoPromptHover}
               onClick={() => navigate('/designer/prompt-builder')}
             />
             <BentoGridItem
               title="Конструктор видео"
               description="Субъект, действие, камера, освещение — параметры для генерации видео."
               icon={<Video className="h-5 w-5 text-amber-500" />}
-              className="border-amber-200 hover:border-amber-300"
+              className={bentoPromptHover}
               onClick={() => navigate('/designer/video-prompt-builder')}
             />
             <BentoGridItem
               title="Конструктор презентаций"
               description="Тема, аудитория, структура, стиль, типографика, доступность."
               icon={<Presentation className="h-5 w-5 text-emerald-500" />}
-              className="border-emerald-200 hover:border-emerald-300"
+              className={bentoPromptHover}
               onClick={() => navigate('/designer/presentation-prompt-builder')}
             />
             <BentoGridItem
               title="Конструктор анализа данных"
               description="3 шага: диагностика → планирование → отчёт. Роль, цель, формат."
               icon={<BarChart3 className="h-5 w-5 text-blue-500" />}
-              className="border-blue-200 hover:border-blue-300"
+              className={bentoPromptHover}
               onClick={() => navigate('/manager/analytics-prompt-builder')}
             />
             <BentoGridItem
               title="Конструктор для разработки"
-              description="Одностраничные SPA: контекст, параметры типа, техтребования, приёмка. Qwen Артефакты."
+              description="Единый промпт разработка страницы простого веб приложения. Плюс шаги для создания цифровых Артефактов."
               icon={<Code className="h-5 w-5 text-teal-500" />}
-              className="border-teal-200 hover:border-teal-300"
+              className={bentoPromptHover}
               onClick={() => navigate('/developer/single-page-apps')}
             />
           </div>
