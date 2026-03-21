@@ -257,7 +257,6 @@ export function DeveloperSinglePagePage() {
             <p className="font-semibold text-zinc-900 mb-1">Безопасность и данные</p>
             <p>
               Не вставляйте в промпты персональные данные третьих лиц; проверяйте сгенерированный код перед публикацией.
-              Один файл без CDN снижает риски supply-chain; не добавляйте ключи API в клиентский код.
             </p>
           </div>
         </div>
