@@ -5,7 +5,7 @@ import { materials, MaterialType, Category } from '@/data/materials';
 import { MaterialCard } from '@/components/MaterialCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { X, Filter, Search, Image, Video, Presentation, BarChart3, Code } from 'lucide-react';
+import { X, Filter, Search, Image, Video, Presentation, BarChart3, Code, PenLine } from 'lucide-react';
 import { PageWide } from '@/components/layout/PageContainer';
 import { siteUi } from '@/lib/siteUi';
 
@@ -207,6 +207,33 @@ export function CatalogPage() {
                   </div>
                   <p className="text-sm text-zinc-600 leading-relaxed">
                     Роль, тип данных, цель, формат отчёта. Множественный выбор + свой вариант. Этика и безопасность.
+                  </p>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {activeCategory === 'editor' && (
+            <div className="mb-10">
+              <h2 className="text-2xl font-bold text-zinc-900 mb-2">Собери свой промпт</h2>
+              <p className="text-zinc-600 mb-6">
+                Единое ТЗ для модели: пять пресетов (углы подачи, сценарий, анти-клише, анонс, объяснение), тема, аудитория,
+                тон и правила.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <button
+                  type="button"
+                  onClick={() => navigate('/editor/prompt-builder')}
+                  className={siteUi.bentoPromptCard}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="rounded-xl p-2.5 bg-rose-100">
+                      <PenLine className="w-6 h-6 text-rose-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-zinc-900">Редактор смыслов и текстов</h3>
+                  </div>
+                  <p className="text-sm text-zinc-600 leading-relaxed">
+                    Пресеты под задачу: идеи и структура vs готовый текст. Качество, «исключить», опция «Сделать сильнее».
                   </p>
                 </button>
               </div>

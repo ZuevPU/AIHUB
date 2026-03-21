@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, PenTool, Briefcase, Palette, Code, Image, Video, Presentation, BarChart3 } from 'lucide-react';
+import { Sparkles, PenTool, Briefcase, Palette, Code, Image, Video, Presentation, BarChart3, PenLine } from 'lucide-react';
 import { BentoGridItem } from '@/components/BentoGrid';
 
 const bentoPromptHover = 'hover:shadow-lg hover:border-zinc-300 transition-all';
@@ -91,7 +91,7 @@ export function HomePage() {
             <p className="mt-4 text-lg text-zinc-600">Выберите тип контента и соберите идеальный промпт по частям — от изображений до одностраничных приложений</p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
             <BentoGridItem
               title="Конструктор изображения"
               description="Генерация изображений в Алиса AI и GigaChat. Соберите промпт по частям."
@@ -119,6 +119,13 @@ export function HomePage() {
               icon={<BarChart3 className="h-5 w-5 text-blue-500" />}
               className={bentoPromptHover}
               onClick={() => navigate('/manager/analytics-prompt-builder')}
+            />
+            <BentoGridItem
+              title="Конструктор для редактора"
+              description="Тема, аудитория, пресеты: углы подачи, сценарий, анти-клише, анонс, объяснение."
+              icon={<PenLine className="h-5 w-5 text-rose-500" />}
+              className={bentoPromptHover}
+              onClick={() => navigate('/editor/prompt-builder')}
             />
             <BentoGridItem
               title="Конструктор для разработки"

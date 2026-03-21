@@ -10,6 +10,7 @@ import { PromptBuilderPage } from '@/pages/PromptBuilderPage';
 import { PromptBuilderVideoPage } from '@/pages/PromptBuilderVideoPage';
 import { PromptBuilderPresentationPage } from '@/pages/PromptBuilderPresentationPage';
 import { PromptBuilderAnalyticsPage } from '@/pages/PromptBuilderAnalyticsPage';
+import { PromptBuilderEditorPage } from '@/pages/PromptBuilderEditorPage';
 import { DeveloperSinglePagePage } from '@/pages/DeveloperSinglePagePage';
 
 function Layout() {
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="designer/video-prompt-builder" element={<PromptBuilderVideoPage />} />
           <Route path="designer/presentation-prompt-builder" element={<PromptBuilderPresentationPage />} />
           <Route path="manager/analytics-prompt-builder" element={<PromptBuilderAnalyticsPage />} />
+          <Route path="editor/prompt-builder" element={<PromptBuilderEditorPage />} />
           <Route path="developer/single-page-apps" element={<DeveloperSinglePagePage />} />
           <Route path="material/:id" element={<MaterialDetailPage />} />
         </Route>
