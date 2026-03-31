@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PromptCopyButton } from '@/components/PromptCopyButton';
 import { RelatedCards } from '@/components/RelatedCards';
 import { AIToolsSection } from '@/components/AIToolsSection';
+import { PromptExampleMarkdown } from '@/components/PromptExampleMarkdown';
 import { ArrowLeft, Download, ExternalLink, FileText, Wrench, MessageSquare, Bot } from 'lucide-react';
 import { siteUi } from '@/lib/siteUi';
 import { cn } from '@/lib/utils';
@@ -154,6 +155,43 @@ export function MaterialDetailPage() {
               </div>
             </div>
           ) : null}
+          {isPrompt && material.example_result && (
+            <div className="mt-8 rounded-2xl border border-zinc-200 bg-white overflow-hidden">
+              <div className="px-6 py-4 bg-zinc-50/50 border-b border-zinc-200">
+                <h3 className="text-lg font-semibold text-zinc-900">Пример результата</h3>
+                <p className="text-sm text-zinc-600 mt-2 leading-relaxed">
+                  Фрагмент ответа нейросети по этому промпту
+                  {material.id === 'prompt_008' &&
+                    ' (тема в примере — этика ИИ для учителей математики).'}
+                  {material.id === 'prompt_009' &&
+                    ' (тема в примере — ИИ в образовании, три структуры сценария, ~30 мин).'}
+                  {material.id === 'prompt_010' &&
+                    ' (тема в примере — ИИ и обучение, 10 подач по пяти оптикам).'}
+                  {material.id !== 'prompt_008' &&
+                    material.id !== 'prompt_009' &&
+                    material.id !== 'prompt_010' &&
+                    '.'}
+                  {material.example_url ? (
+                    <>
+                      {' '}
+                      <a
+                        href={material.example_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-medium text-zinc-900 underline underline-offset-2 hover:text-zinc-700"
+                      >
+                        Открыть полный диалог в Qwen Chat
+                      </a>
+                      .
+                    </>
+                  ) : null}
+                </p>
+              </div>
+              <div className="p-6 max-h-[min(70vh,780px)] overflow-y-auto border-t border-zinc-100">
+                <PromptExampleMarkdown markdown={material.example_result} />
+              </div>
+            </div>
+          )}
           {isPrompt && material.id === 'prompt_030' && (
             <div className="mt-8 rounded-2xl border border-zinc-200 bg-white overflow-hidden">
               <div className="px-6 py-4 bg-zinc-50/50 border-b border-zinc-200">
@@ -168,7 +206,8 @@ export function MaterialDetailPage() {
               </div>
             </div>
           )}
-          {isPrompt && (material.url || material.example_url) && (
+          {isPrompt &&
+            (material.url || (material.example_url && !material.example_result)) && (
             <div className="mt-6 flex flex-wrap gap-3">
               {material.url && (
                 <a
@@ -181,7 +220,7 @@ export function MaterialDetailPage() {
                   Открыть пример
                 </a>
               )}
-              {material.example_url && (
+              {material.example_url && !material.example_result && (
                 <a
                   href={material.example_url}
                   target="_blank"
@@ -356,11 +395,7 @@ export function MaterialDetailPage() {
                   <TabsContent active={activeTab === 'example'} className="mt-0 outline-none">
                     <h3 className="text-xl font-semibold text-zinc-900 mb-6">Пример результата</h3>
                     <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-6">
-                      <div className="prose prose-zinc max-w-none">
-                        <pre className="text-zinc-700 font-sans text-base leading-relaxed whitespace-pre-wrap bg-transparent p-0 border-0">
-                          {material.example_result}
-                        </pre>
-                      </div>
+                      <PromptExampleMarkdown markdown={material.example_result} />
                     </div>
                   </TabsContent>
                 )}
