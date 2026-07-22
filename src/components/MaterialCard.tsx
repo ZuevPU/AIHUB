@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Material } from '@/data/materials';
 import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
 import { Badge } from './ui/badge';
-import { ArrowRight, ExternalLink, Wrench, MessageSquare, Bot } from 'lucide-react';
+import { ArrowRight, ExternalLink, Wrench, MessageSquare } from 'lucide-react';
 
 interface MaterialCardProps {
   material: Material;
@@ -12,13 +12,11 @@ interface MaterialCardProps {
 const typeIcons = {
   tool: Wrench,
   prompt: MessageSquare,
-  agent: Bot,
 };
 
 const typeLabels = {
   tool: 'Инструмент',
   prompt: 'Промпт',
-  agent: 'Агент',
 };
 
 const categoryLabels = {
@@ -139,7 +137,7 @@ export function MaterialCard({ material }: MaterialCardProps) {
             <a
               href={material.url}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2"
             >
               Открыть

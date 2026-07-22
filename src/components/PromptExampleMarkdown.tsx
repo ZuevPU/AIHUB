@@ -2,6 +2,16 @@ import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 
+function isSafeHref(href?: string): href is string {
+  if (!href) return false;
+  try {
+    const url = new URL(href, window.location.origin);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 const exampleComponents: Components = {
   h3: ({ children }) => (
     <h3 className="text-base font-semibold text-zinc-900 mt-5 mb-2 first:mt-0 scroll-mt-4">{children}</h3>
@@ -21,9 +31,16 @@ const exampleComponents: Components = {
   ),
   li: ({ children }) => <li className="leading-relaxed pl-0.5">{children}</li>,
   hr: () => null,
+  a: ({ href, children }) =>
+    isSafeHref(href) ? (
+      <a href={href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+        {children}
+      </a>
+    ) : (
+      <span>{children}</span>
+    ),
 };
 
-/** Рендерит пример результата: заголовки ###, **жирный**, *курсив* без «сырого» Markdown в интерфейсе */
 export function PromptExampleMarkdown({ markdown }: { markdown: string }) {
   return (
     <div className="text-sm">

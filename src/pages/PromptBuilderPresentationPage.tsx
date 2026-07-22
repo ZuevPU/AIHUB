@@ -1,15 +1,4 @@
-import * as React from 'react';
-import { useState, useMemo } from 'react';
-import {
-  Copy,
-  Check,
-  RotateCcw,
-  Shuffle,
-  ExternalLink,
-  Sparkles,
-  ChevronDown,
-  ChevronUp,
-} from 'lucide-react';
+import { useMemo, useState } from 'react';
 import {
   presentationPromptSections,
   presentationTechnicalFields,
@@ -18,57 +7,40 @@ import {
   buildPresentationPrompt,
   getInitialPresentationSelections,
 } from '@/data/promptBuilderPresentationConfig';
+import { SERVICE_LINKS } from '@/data/serviceLinks';
+import { usePromptBuilderState, useToggleList } from '@/hooks/usePromptBuilderState';
 import { cn } from '@/lib/utils';
 import { siteUi } from '@/lib/siteUi';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { BackLink } from '@/components/layout/BackLink';
-import { WhyHint } from '@/components/layout/WhyHint';
-
-const serviceLinks = [
-  { id: 'gamma', label: 'Gamma', url: 'https://gamma.app/' },
-  { id: 'gigachat', label: 'GigaChat', url: 'https://giga.chat/' },
-] as const;
+import { PromptSectionCard } from '@/components/promptBuilder/PromptSectionCard';
+import { PromptFieldBlock } from '@/components/promptBuilder/PromptFieldBlock';
+import { CheckboxOptionGroup } from '@/components/promptBuilder/CheckboxOptionGroup';
+import { PromptBuilderSidebar } from '@/components/promptBuilder/PromptBuilderSidebar';
+import { TechnicalCollapse } from '@/components/promptBuilder/TechnicalCollapse';
 
 const TECH_WHY =
   'Формат, соотношение сторон и вес файла — явное ТЗ для экспорта и демонстрации.';
 
 export function PromptBuilderPresentationPage() {
-  const [selections, setSelections] = useState<Record<string, string>>(getInitialPresentationSelections);
-  const [customInputs, setCustomInputs] = useState<Record<string, string>>({});
-  const [slideContentIds, setSlideContentIds] = useState<string[]>(() =>
+  const {
+    selections,
+    setSelections,
+    customInputs,
+    getValue,
+    handleSelect,
+    handleCustomChange,
+    resetSelections,
+    randomizeFromSections,
+  } = usePromptBuilderState(getInitialPresentationSelections);
+  const { ids: slideContentIds, setIds: setSlideContentIds, toggle: toggleSlideContent } = useToggleList(() =>
     presentationSlideContentOptions.map((o) => o.id)
   );
-  const [negativeIds, setNegativeIds] = useState<string[]>(() =>
+  const { ids: negativeIds, setIds: setNegativeIds, toggle: toggleNegative } = useToggleList(() =>
     PRESENTATION_NEGATIVE_OPTIONS.map((n) => n.id)
   );
   const [includeTechnical, setIncludeTechnical] = useState(false);
   const [enhance, setEnhance] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  const getValue = (fieldId: string) => {
-    const custom = customInputs[fieldId]?.trim();
-    if (custom) return custom;
-    return selections[fieldId] || '';
-  };
-
-  const handleSelect = (fieldId: string, text: string) => {
-    setSelections((prev) => ({ ...prev, [fieldId]: text }));
-    setCustomInputs((prev) => ({ ...prev, [fieldId]: '' }));
-  };
-
-  const handleCustomChange = (fieldId: string, value: string) => {
-    setCustomInputs((prev) => ({ ...prev, [fieldId]: value }));
-  };
-
-  const toggleSlideContent = (id: string) => {
-    setSlideContentIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  };
-
-  const toggleNegative = (id: string) => {
-    setNegativeIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-  };
 
   const fullPrompt = useMemo(
     () =>
@@ -83,19 +55,8 @@ export function PromptBuilderPresentationPage() {
     [selections, customInputs, slideContentIds, negativeIds, includeTechnical, enhance]
   );
 
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(fullPrompt);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
-
   const handleReset = () => {
-    setSelections(getInitialPresentationSelections());
-    setCustomInputs({});
+    resetSelections();
     setSlideContentIds(presentationSlideContentOptions.map((o) => o.id));
     setNegativeIds(PRESENTATION_NEGATIVE_OPTIONS.map((n) => n.id));
     setIncludeTechnical(false);
@@ -103,60 +64,19 @@ export function PromptBuilderPresentationPage() {
   };
 
   const handleRandomize = () => {
-    const next: Record<string, string> = { ...getInitialPresentationSelections() };
-    setCustomInputs({});
-    for (const section of presentationPromptSections) {
-      for (const field of section.fields) {
-        if (field.options.length > 0) {
-          const r = field.options[Math.floor(Math.random() * field.options.length)];
-          next[field.id] = r.text;
-        }
-      }
-    }
+    randomizeFromSections(presentationPromptSections);
+    const next = { ...getInitialPresentationSelections() };
     for (const field of presentationTechnicalFields) {
       if (field.options.length > 0) {
-        const r = field.options[Math.floor(Math.random() * field.options.length)];
-        next[field.id] = r.text;
+        const randomOption = field.options[Math.floor(Math.random() * field.options.length)];
+        next[field.id] = randomOption.text;
       }
     }
     setSelections(next);
-    setSlideContentIds(
-      presentationSlideContentOptions.filter(() => Math.random() > 0.25).map((o) => o.id)
-    );
+    setSlideContentIds(presentationSlideContentOptions.filter(() => Math.random() > 0.25).map((o) => o.id));
     setNegativeIds(PRESENTATION_NEGATIVE_OPTIONS.filter(() => Math.random() > 0.35).map((n) => n.id));
     setEnhance(false);
   };
-
-  const renderFieldBlock = (field: (typeof presentationPromptSections)[0]['fields'][0]) => (
-    <div key={field.id}>
-      <p className={siteUi.fieldLabel}>{field.label}</p>
-      <div className="flex flex-wrap gap-2 mb-2">
-        {field.options.map((opt) => (
-          <button
-            key={opt.id}
-            type="button"
-            onClick={() => handleSelect(field.id, opt.text)}
-            className={cn(
-              siteUi.chipBase,
-              'text-left',
-              getValue(field.id) === opt.text && !customInputs[field.id]?.trim()
-                ? siteUi.chipOn
-                : siteUi.chipOff
-            )}
-          >
-            {opt.text.length > 52 ? opt.text.slice(0, 52) + '…' : opt.text}
-          </button>
-        ))}
-      </div>
-      <input
-        type="text"
-        value={customInputs[field.id] || ''}
-        onChange={(e) => handleCustomChange(field.id, e.target.value)}
-        placeholder="Свой вариант (переопределяет выбор выше)..."
-        className={siteUi.input}
-      />
-    </div>
-  );
 
   return (
     <PageContainer>
@@ -185,174 +105,93 @@ export function PromptBuilderPresentationPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           {presentationPromptSections.map((section) => (
-            <div key={section.id} className={siteUi.sectionCard}>
-              <div className="mb-4">
-                <h2 className={siteUi.sectionHeading}>
-                  <span>{section.icon}</span>
-                  {section.label}
-                </h2>
-                <WhyHint>{section.why}</WhyHint>
+            <PromptSectionCard key={section.id} icon={section.icon} label={section.label} why={section.why}>
+              <div className="space-y-5">
+                {section.fields.map((field) => (
+                  <PromptFieldBlock
+                    key={field.id}
+                    fieldId={field.id}
+                    label={field.label}
+                    options={field.options}
+                    selectedText={getValue(field.id)}
+                    customValue={customInputs[field.id] || ''}
+                    onSelect={handleSelect}
+                    onCustomChange={handleCustomChange}
+                  />
+                ))}
               </div>
-              <div className="space-y-5">{section.fields.map(renderFieldBlock)}</div>
-            </div>
+            </PromptSectionCard>
           ))}
 
-          <div className={siteUi.sectionCard}>
-            <div className="mb-4">
-              <h2 className={siteUi.sectionHeading}>
-                <span>🟤</span>
-                Контент слайдов
-              </h2>
-              <WhyHint>Явно задаёт, что может быть на слайдах: текст, медиа, графики.</WhyHint>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {presentationSlideContentOptions.map((opt) => (
-                <label
-                  key={opt.id}
-                  className={cn(
-                    siteUi.checkboxLabelBase,
-                    slideContentIds.includes(opt.id) ? siteUi.checkboxOn : siteUi.checkboxOff
-                  )}
-                >
-                  <input
-                    type="checkbox"
-                    checked={slideContentIds.includes(opt.id)}
-                    onChange={() => toggleSlideContent(opt.id)}
-                    className={siteUi.checkboxInput}
-                  />
-                  {opt.text}
-                </label>
-              ))}
-            </div>
+          <PromptSectionCard
+            icon="🟤"
+            label="Контент слайдов"
+            why="Явно задаёт, что может быть на слайдах: текст, медиа, графики."
+          >
+            <CheckboxOptionGroup
+              options={presentationSlideContentOptions}
+              selectedIds={slideContentIds}
+              onToggle={toggleSlideContent}
+            />
             <p className="mt-3 text-xs text-zinc-500">
               Пример: «текст, изображения, короткие видео с субтитрами» — отметьте нужные типы.
             </p>
-          </div>
+          </PromptSectionCard>
 
-          <div className={siteUi.technicalCollapse}>
-            <button
-              type="button"
-              onClick={() => setIncludeTechnical((x) => !x)}
-              className="w-full flex items-center justify-between gap-2 text-left font-semibold text-zinc-900"
-            >
-              <span className="flex items-center gap-2">
-                <span>⚫</span>
-                Технические параметры
-              </span>
-              {includeTechnical ? <ChevronUp className="w-5 h-5 shrink-0" /> : <ChevronDown className="w-5 h-5 shrink-0" />}
-            </button>
-            <WhyHint>{TECH_WHY}</WhyHint>
-            {includeTechnical && (
-              <div className="mt-5 space-y-5 border-t border-zinc-200 pt-5">
-                {presentationTechnicalFields.map(renderFieldBlock)}
-              </div>
-            )}
-          </div>
+          <TechnicalCollapse
+            title="Технические параметры"
+            why={TECH_WHY}
+            open={includeTechnical}
+            onOpenChange={setIncludeTechnical}
+          >
+            {presentationTechnicalFields.map((field) => (
+              <PromptFieldBlock
+                key={field.id}
+                fieldId={field.id}
+                label={field.label}
+                options={field.options}
+                selectedText={getValue(field.id)}
+                customValue={customInputs[field.id] || ''}
+                onSelect={handleSelect}
+                onCustomChange={handleCustomChange}
+              />
+            ))}
+          </TechnicalCollapse>
 
-          <div className={siteUi.sectionCard}>
-            <div className="mb-4">
-              <h2 className={siteUi.sectionHeading}>
-                <span>🚫</span>
-                Ограничения (negative)
-              </h2>
-              <WhyHint>Снижает типичные ошибки: стена текста, плохая читаемость, лишние шрифты.</WhyHint>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {PRESENTATION_NEGATIVE_OPTIONS.map((opt) => (
-                <label
-                  key={opt.id}
-                  className={cn(
-                    siteUi.checkboxLabelBase,
-                    negativeIds.includes(opt.id) ? siteUi.checkboxOn : siteUi.checkboxOff
-                  )}
-                >
-                  <input
-                    type="checkbox"
-                    checked={negativeIds.includes(opt.id)}
-                    onChange={() => toggleNegative(opt.id)}
-                    className={siteUi.checkboxInput}
-                  />
-                  {opt.text}
-                </label>
-              ))}
-            </div>
-          </div>
+          <PromptSectionCard
+            icon="🚫"
+            label="Ограничения (negative)"
+            why="Снижает типичные ошибки: стена текста, плохая читаемость, лишние шрифты."
+          >
+            <CheckboxOptionGroup
+              options={PRESENTATION_NEGATIVE_OPTIONS}
+              selectedIds={negativeIds}
+              onToggle={toggleNegative}
+            />
+          </PromptSectionCard>
         </div>
 
         <div className="lg:col-span-1">
-          <div className="lg:sticky lg:top-24 space-y-4">
-            <div className={siteUi.sidebarCard}>
-              <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-                <h3 className="font-semibold text-zinc-900">Ваш промпт</h3>
-                <div className="flex gap-2">
-                  <button type="button" onClick={handleReset} className={siteUi.iconButton} title="Сбросить">
-                    <RotateCcw className="w-4 h-4" />
-                  </button>
-                  <button type="button" onClick={handleRandomize} className={siteUi.iconButton} title="Случайный выбор">
-                    <Shuffle className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              {!includeTechnical && (
+          <PromptBuilderSidebar
+            fullPrompt={fullPrompt}
+            enhance={enhance}
+            onEnhanceToggle={() => setEnhance((value) => !value)}
+            enhanceNote="Включено усиление: сторителлинг, чёткая структура, короче текст на слайдах"
+            enhanceLabel="Сделать презентацию сильнее"
+            onReset={handleReset}
+            onRandomize={handleRandomize}
+            serviceLinksTitle="Где создать презентацию?"
+            serviceLinks={SERVICE_LINKS.presentation}
+            textareaRows={22}
+            textareaClassName={cn(siteUi.textareaPromptTall, 'min-h-[360px]')}
+            beforeTextarea={
+              !includeTechnical ? (
                 <p className="text-xs text-zinc-500 mb-2">
                   Раскройте «Технические параметры», чтобы добавить строку с форматом и разрешением.
                 </p>
-              )}
-
-              {enhance && (
-                <p className={siteUi.enhanceNote}>
-                  Включено усиление: сторителлинг, чёткая структура, короче текст на слайдах
-                </p>
-              )}
-
-              <textarea
-                value={fullPrompt}
-                readOnly
-                rows={22}
-                className={cn(siteUi.textareaPromptTall, 'min-h-[360px]')}
-              />
-
-              <button
-                type="button"
-                onClick={() => setEnhance((e) => !e)}
-                className={cn('w-full mt-3 flex items-center justify-center gap-2', siteUi.secondaryButton)}
-              >
-                <Sparkles className="w-5 h-5" />
-                Сделать презентацию сильнее
-              </button>
-
-              <button
-                type="button"
-                onClick={copyToClipboard}
-                className={cn(copied ? siteUi.primaryButtonSuccess : siteUi.primaryButton, 'mt-3')}
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-5 h-5" />
-                    Скопировано!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-5 h-5" />
-                    Копировать промпт
-                  </>
-                )}
-              </button>
-
-              <div className="mt-6 pt-4 border-t border-zinc-200">
-                <h3 className="text-sm font-medium text-zinc-900 mb-3">Где создать презентацию?</h3>
-                <div className="flex flex-wrap gap-2">
-                  {serviceLinks.map((s) => (
-                    <a key={s.id} href={s.url} target="_blank" rel="noreferrer" className={siteUi.linkOutbound}>
-                      <ExternalLink className="w-4 h-4" />
-                      {s.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+              ) : null
+            }
+          />
         </div>
       </div>
     </PageContainer>

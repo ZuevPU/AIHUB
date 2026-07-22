@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Sparkles } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Input } from './ui/input';
 import logo from '../assets/logo.png';
 
@@ -36,6 +36,7 @@ export function Header() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-500" />
             <Input
               type="search"
+              aria-label="Поиск по промптам и инструментам"
               placeholder="Поиск по промптам и инструментам..."
               className="w-full bg-zinc-100 pl-9 border-transparent focus-visible:bg-white focus-visible:ring-zinc-300"
               value={searchQuery}

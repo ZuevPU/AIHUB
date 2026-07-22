@@ -24,7 +24,7 @@ export function CatalogPage() {
     const categoryParam = params.get('category') as Category | null;
     const qParam = params.get('q');
 
-    if (typeParam && ['tool', 'prompt', 'agent'].includes(typeParam)) {
+    if (typeParam && ['tool', 'prompt'].includes(typeParam)) {
       setActiveType(typeParam);
     } else {
       setActiveType('all');

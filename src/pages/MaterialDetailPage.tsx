@@ -9,20 +9,18 @@ import { PromptCopyButton } from '@/components/PromptCopyButton';
 import { RelatedCards } from '@/components/RelatedCards';
 import { AIToolsSection } from '@/components/AIToolsSection';
 import { PromptExampleMarkdown } from '@/components/PromptExampleMarkdown';
-import { ArrowLeft, Download, ExternalLink, FileText, Wrench, MessageSquare, Bot } from 'lucide-react';
+import { ArrowLeft, Download, ExternalLink, FileText, Wrench, MessageSquare } from 'lucide-react';
 import { siteUi } from '@/lib/siteUi';
 import { cn } from '@/lib/utils';
 
 const typeIcons = {
   tool: Wrench,
   prompt: MessageSquare,
-  agent: Bot,
 };
 
 const typeLabels = {
   tool: 'Инструмент',
   prompt: 'Промпт',
-  agent: 'Агент',
 };
 
 const categoryLabels = {
@@ -64,21 +62,8 @@ export function MaterialDetailPage() {
   );
 
   const Icon = typeIcons[material.type];
-  const isPrompt = material.type === 'prompt';
-  const isDeveloper = material.categories.includes('developer');
-
-  const developerAlgorithm = [
-    'Откройте интерфейс Qwen',
-    'Выберите режим: «Веб-разработка» или «Артефакты»',
-    'Добавьте задачу: прикрепите фото или опишите текстом',
-    'Введите промпт и дождитесь генерации — ИИ создаст HTML/CSS/JS код',
-    'Нажмите «Предварительный просмотр» или «Запустить», чтобы увидеть приложение прямо в чате',
-    'Протестируйте приложение: проверьте работу кнопок и полей ввода, убедитесь, что логика верна — математическая и алгоритмическая',
-    'Напишите правки агенту: «Исправь ошибку в расчёте» или «Сделай кнопку больше»',
-    'Нажмите «Развернуть», чтобы открыть приложение на весь экран без интерфейса чата',
-    'Скопируйте ссылку из адресной строки или через вкладку «Поделиться»',
-    'Отправьте ученикам: в электронный журнал, чат класса или на образовательную платформу',
-  ];
+  const isPrompt = material.layout === 'prompt' || material.type === 'prompt';
+  const algorithmSteps = material.algorithmSteps;
 
   return (
     <div className={siteUi.page}>
@@ -124,6 +109,14 @@ export function MaterialDetailPage() {
           <p className="text-lg text-zinc-600 mb-8 leading-relaxed whitespace-pre-wrap">
             {material.description}
           </p>
+          {material.builderRoute && (
+            <Link
+              to={material.builderRoute}
+              className="inline-flex items-center gap-2 rounded-lg border border-zinc-900 bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 mb-8"
+            >
+              Открыть конструктор
+            </Link>
+          )}
           {material.prompts ? (
             <div className="space-y-6">
               {material.prompts.map((promptText, index) => (
@@ -160,24 +153,14 @@ export function MaterialDetailPage() {
               <div className="px-6 py-4 bg-zinc-50/50 border-b border-zinc-200">
                 <h3 className="text-lg font-semibold text-zinc-900">Пример результата</h3>
                 <p className="text-sm text-zinc-600 mt-2 leading-relaxed">
-                  Фрагмент ответа нейросети по этому промпту
-                  {material.id === 'prompt_008' &&
-                    ' (тема в примере — этика ИИ для учителей математики).'}
-                  {material.id === 'prompt_009' &&
-                    ' (тема в примере — ИИ в образовании, три структуры сценария, ~30 мин).'}
-                  {material.id === 'prompt_010' &&
-                    ' (тема в примере — ИИ и обучение, 10 подач по пяти оптикам).'}
-                  {material.id !== 'prompt_008' &&
-                    material.id !== 'prompt_009' &&
-                    material.id !== 'prompt_010' &&
-                    '.'}
+                  {material.exampleCaption ?? 'Фрагмент ответа нейросети по этому промпту.'}
                   {material.example_url ? (
                     <>
                       {' '}
                       <a
                         href={material.example_url}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="font-medium text-zinc-900 underline underline-offset-2 hover:text-zinc-700"
                       >
                         Открыть полный диалог в Qwen Chat
@@ -192,15 +175,15 @@ export function MaterialDetailPage() {
               </div>
             </div>
           )}
-          {isPrompt && material.id === 'prompt_030' && (
+          {isPrompt && algorithmSteps && algorithmSteps.length > 0 && (
             <div className="mt-8 rounded-2xl border border-zinc-200 bg-white overflow-hidden">
               <div className="px-6 py-4 bg-zinc-50/50 border-b border-zinc-200">
                 <h3 className="text-lg font-semibold text-zinc-900">Алгоритм выполнения</h3>
               </div>
               <div className="p-6">
                 <ol className="text-zinc-700 text-base leading-relaxed space-y-2 list-decimal list-inside">
-                  {developerAlgorithm.map((step, i) => (
-                    <li key={i}>{step}</li>
+                  {algorithmSteps.map((step) => (
+                    <li key={step}>{step}</li>
                   ))}
                 </ol>
               </div>
@@ -213,7 +196,7 @@ export function MaterialDetailPage() {
                 <a
                   href={material.url}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50"
                 >
                   <ExternalLink className="w-4 h-4" />
@@ -224,7 +207,7 @@ export function MaterialDetailPage() {
                 <a
                   href={material.example_url}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50"
                 >
                   <ExternalLink className="w-4 h-4" />
@@ -239,7 +222,7 @@ export function MaterialDetailPage() {
                 <h3 className="text-lg font-semibold text-zinc-900">Пример результата</h3>
               </div>
               <div className="p-4">
-                <a href={material.example_url} target="_blank" rel="noreferrer" className="block">
+                <a href={material.example_url} target="_blank" rel="noopener noreferrer" className="block">
                   <img
                     src={material.example_url}
                     alt="Пример результата промпта"
@@ -287,7 +270,7 @@ export function MaterialDetailPage() {
                 <a
                   href={material.url}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 mb-6"
                 >
                   Открыть ресурс

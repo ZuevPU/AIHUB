@@ -266,7 +266,6 @@ export function buildSpaPrompt(params: {
   const cDef = artifactsConfig.defaults.complexity[cKey];
   const complexityLine = `уровень: ${complexityText}; ориентир: секций ~${cDef.sections}, ${cDef.features} возможности`;
 
-  const topicValue = topic.trim() || SPA_DEFAULT_TEMPLATE_OPTIONS.topic;
   const styleValue = getStyleValue(styleId);
 
   const merged = { ...SPA_DEFAULT_TEMPLATE_OPTIONS, ...templateOptions };

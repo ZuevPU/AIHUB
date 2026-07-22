@@ -1,0 +1,98 @@
+import { PLACEHOLDER_IMAGE, type Material } from './types';
+
+export const tools: Material[] = [
+  {
+    id: 'tool_001',
+    title: 'Яндекс Алиса',
+    image: PLACEHOLDER_IMAGE,
+    description:
+      'ИИ-помощник Яндекса для диалога, анализа документов и структурирования данных. Поддержка текста и голоса.',
+    tags: ['LLM', 'диалог', 'документы', 'голос', 'инструмент'],
+    categories: ['designer', 'editor', 'manager'],
+    type: 'tool',
+    layout: 'tool',
+    url: 'https://alice.yandex.ru/',
+  },
+  {
+    id: 'tool_002',
+    title: 'GigaChat',
+    image: PLACEHOLDER_IMAGE,
+    description:
+      'Российская LLM от Сбера. Генерация текста, анализ данных, режим «Провести исследование» для отчётов.',
+    tags: ['LLM', 'анализ', 'исследования', 'отчёты', 'инструмент'],
+    categories: ['designer', 'editor', 'manager'],
+    type: 'tool',
+    layout: 'tool',
+    url: 'https://giga.chat/',
+  },
+  {
+    id: 'tool_003',
+    title: 'Deepseek Chat',
+    image: PLACEHOLDER_IMAGE,
+    description:
+      'ИИ-платформа для кода и аналитики. Высокая точность в математике, логике и работе со структурированными данными.',
+    tags: ['LLM', 'код', 'математика', 'аналитика', 'инструмент'],
+    categories: ['developer', 'editor', 'manager'],
+    type: 'tool',
+    layout: 'tool',
+    url: 'https://chat.deepseek.com/',
+  },
+  {
+    id: 'tool_004',
+    title: 'Qwen',
+    image: PLACEHOLDER_IMAGE,
+    description:
+      'Мультимодальная LLM Alibaba. Большое контекстное окно, Deep Research, поддержка текста и изображений.',
+    tags: ['LLM', 'мультимодальность', 'изображения', 'Deep Research', 'инструмент'],
+    categories: ['designer', 'editor', 'manager', 'developer'],
+    type: 'tool',
+    layout: 'tool',
+    url: 'https://chat.qwen.ai/',
+  },
+  {
+    id: 'tool_005',
+    title: 'Gamma',
+    image: PLACEHOLDER_IMAGE,
+    description:
+      'ИИ-платформа для создания презентаций, сайтов и документов. Генерирует слайды, питч-деки, графику для соцсетей.',
+    tags: ['презентации', 'сайты', 'питч-деки', 'дизайн', 'инструмент'],
+    categories: ['designer'],
+    type: 'tool',
+    layout: 'tool',
+    url: 'https://gamma.app/',
+  },
+  {
+    id: 'tool_006',
+    title: 'Яндекс Алиса Про',
+    image: PLACEHOLDER_IMAGE,
+    description:
+      'ИИ-помощник Яндекса для работы с документами, анализа и структурирования корпоративных файлов.',
+    tags: ['LLM', 'документы', 'корпоративный', 'анализ', 'инструмент'],
+    categories: ['manager'],
+    type: 'tool',
+    layout: 'tool',
+    url: 'https://alicepro.yandex.ru/expert',
+  },
+  {
+    id: 'tool_007',
+    title: 'Perplexity',
+    image: PLACEHOLDER_IMAGE,
+    description: 'ИИ-поисковик с цитированием источников. Ответы на вопросы с проверяемыми ссылками.',
+    tags: ['поиск', 'исследования', 'цитирование', 'источники', 'инструмент'],
+    categories: ['editor', 'manager'],
+    type: 'tool',
+    layout: 'tool',
+    url: 'https://www.perplexity.ai/',
+  },
+  {
+    id: 'tool_008',
+    title: 'Shedevrum',
+    image: PLACEHOLDER_IMAGE,
+    description: 'Генерация изображений по текстовому описанию. Фото, видео, клипы на базе нейросетей.',
+    tags: ['генерация изображений', 'видео', 'дизайн', 'нейросети', 'инструмент'],
+    categories: ['designer'],
+    type: 'tool',
+    layout: 'tool',
+    url: 'https://shedevrum.ai/',
+  },
+];

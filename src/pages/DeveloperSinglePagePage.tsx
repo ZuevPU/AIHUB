@@ -1,6 +1,5 @@
-import * as React from 'react';
-import { useState, useMemo, useEffect } from 'react';
-import { ExternalLink, Code, Copy, Check, RotateCcw, Shuffle, Shield, Sparkles } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { ExternalLink, Code, Shield } from 'lucide-react';
 import { artifactsConfig } from '@/data/artifactsConfig';
 import { randomizeSelections } from '@/data/artifactsPromptGenerator';
 import {
@@ -13,45 +12,22 @@ import {
   getInitialSpaSelections,
   getTemplateOptionKeysForUi,
 } from '@/data/promptBuilderSpaConfig';
+import { DEVELOPER_ALGORITHM_STEPS, SERVICE_LINKS } from '@/data/serviceLinks';
+import { randomizeSelectionsFromSections } from '@/data/promptBuilder/shared';
+import { useToggleList } from '@/hooks/usePromptBuilderState';
 import { cn } from '@/lib/utils';
 import { siteUi } from '@/lib/siteUi';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { BackLink } from '@/components/layout/BackLink';
-import { WhyHint } from '@/components/layout/WhyHint';
+import { PromptSectionCard } from '@/components/promptBuilder/PromptSectionCard';
+import { PromptFieldBlock } from '@/components/promptBuilder/PromptFieldBlock';
+import { CheckboxOptionGroup } from '@/components/promptBuilder/CheckboxOptionGroup';
+import { PromptBuilderSidebar } from '@/components/promptBuilder/PromptBuilderSidebar';
 
 const QWEN_ARTIFACTS_URL = 'https://chat.qwen.ai/';
 
-const serviceLinks = [
-  { id: 'qwen', label: 'Qwen', url: 'https://chat.qwen.ai/' },
-  { id: 'gigachat', label: 'GigaChat', url: 'https://giga.chat/' },
-  { id: 'alice', label: 'Алиса AI', url: 'https://alice.yandex.ru/' },
-  { id: 'deepseek', label: 'DeepSeek', url: 'https://chat.deepseek.com/' },
-] as const;
-
-const INSTRUCTION_STEPS = [
-  'Откройте интерфейс Qwen',
-  'Выберите режим: «Артефакты»',
-  'Добавьте задачу: прикрепите файл при необходимости',
-  'Введите промпт и дождитесь генерации — ИИ создаст HTML/CSS/JS код',
-  'Нажмите «Предварительный просмотр» или «Запустить», чтобы увидеть приложение прямо в чате',
-  'Протестируйте приложение: проверьте работу кнопок и полей ввода, убедитесь, что логика верна — математическая и алгоритмическая',
-  'Напишите правки агенту: «Исправь ошибку в расчёте» или «Сделай кнопку больше»',
-  'Нажмите «Развернуть», чтобы открыть приложение на весь экран без интерфейса чата',
-  'Скопируйте ссылку из адресной строки или через вкладку «Поделиться»',
-  'Отправьте готовый продукт или разместите у себя на хостинге (это уже совсем другая история)',
-];
-
 function randomizeMetaSelections(): Record<string, string> {
-  const next = { ...getInitialSpaSelections() };
-  for (const section of spaPromptSections) {
-    for (const field of section.fields) {
-      if (field.options.length) {
-        const r = field.options[Math.floor(Math.random() * field.options.length)];
-        next[field.id] = r.text;
-      }
-    }
-  }
-  return next;
+  return randomizeSelectionsFromSections(spaPromptSections);
 }
 
 export function DeveloperSinglePagePage() {
@@ -62,22 +38,25 @@ export function DeveloperSinglePagePage() {
   const [metaSelections, setMetaSelections] = useState<Record<string, string>>(getInitialSpaSelections);
   const [metaCustom, setMetaCustom] = useState<Record<string, string>>({});
   const [templateOptions, setTemplateOptions] = useState<Record<string, string>>({});
-  const [qualityIds, setQualityIds] = useState<string[]>(() => SPA_QUALITY_OPTIONS.map((q) => q.id));
-  const [negativeIds, setNegativeIds] = useState<string[]>(() => SPA_NEGATIVE_OPTIONS.map((n) => n.id));
+  const { ids: qualityIds, setIds: setQualityIds, toggle: toggleQuality } = useToggleList(() =>
+    SPA_QUALITY_OPTIONS.map((q) => q.id)
+  );
+  const { ids: negativeIds, setIds: setNegativeIds, toggle: toggleNegative } = useToggleList(() =>
+    SPA_NEGATIVE_OPTIONS.map((n) => n.id)
+  );
   const [enhance, setEnhance] = useState(false);
-  const [copied, setCopied] = useState(false);
 
-  const categoryData = artifactsConfig.categories.find((c) => c.id === category);
+  const categoryData = artifactsConfig.categories.find((item) => item.id === category);
   const availableTypes = categoryData?.types ?? [];
-  const typeData = categoryData?.types.find((t) => t.id === type);
+  const typeData = categoryData?.types.find((item) => item.id === type);
 
   useEffect(() => {
-    const tmpl = typeData?.promptTemplate ?? '';
-    const keys = getTemplateOptionKeysForUi(tmpl);
+    const template = typeData?.promptTemplate ?? '';
+    const keys = getTemplateOptionKeysForUi(template);
     setTemplateOptions((prev) => {
       const next: Record<string, string> = {};
-      for (const k of keys) {
-        next[k] = prev[k] ?? SPA_DEFAULT_TEMPLATE_OPTIONS[k] ?? '';
+      for (const key of keys) {
+        next[key] = prev[key] ?? SPA_DEFAULT_TEMPLATE_OPTIONS[key] ?? '';
       }
       return next;
     });
@@ -96,14 +75,6 @@ export function DeveloperSinglePagePage() {
 
   const handleMetaCustomChange = (fieldId: string, value: string) => {
     setMetaCustom((prev) => ({ ...prev, [fieldId]: value }));
-  };
-
-  const toggleQuality = (id: string) => {
-    setQualityIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-  };
-
-  const toggleNegative = (id: string) => {
-    setNegativeIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
   const fullPrompt = useMemo(
@@ -128,16 +99,6 @@ export function DeveloperSinglePagePage() {
     [typeData]
   );
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(fullPrompt);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
-
   const handleReset = () => {
     setCategory('education');
     setType('quiz');
@@ -151,10 +112,10 @@ export function DeveloperSinglePagePage() {
   };
 
   const handleRandomize = () => {
-    const r = randomizeSelections();
-    setCategory(r.category);
-    setType(r.type);
-    setStyle(r.style);
+    const random = randomizeSelections();
+    setCategory(random.category);
+    setType(random.type);
+    setStyle(random.style);
     setTopic('');
     setMetaSelections(randomizeMetaSelections());
     setMetaCustom({});
@@ -164,42 +125,11 @@ export function DeveloperSinglePagePage() {
   };
 
   const setCategoryId = (id: string) => {
-    const cat = artifactsConfig.categories.find((c) => c.id === id);
+    const cat = artifactsConfig.categories.find((item) => item.id === id);
     const firstType = cat?.types[0];
     setCategory(id);
     setType(firstType?.id ?? 'quiz');
   };
-
-  const renderMetaField = (field: (typeof spaPromptSections)[0]['fields'][0]) => (
-    <div key={field.id}>
-      <p className={siteUi.fieldLabel}>{field.label}</p>
-      <div className="flex flex-wrap gap-2 mb-2">
-        {field.options.map((opt) => (
-          <button
-            key={opt.id}
-            type="button"
-            onClick={() => handleMetaSelect(field.id, opt.text)}
-            className={cn(
-              siteUi.chipBase,
-              'text-left',
-              getMetaValue(field.id) === opt.text && !metaCustom[field.id]?.trim()
-                ? siteUi.chipOn
-                : siteUi.chipOff
-            )}
-          >
-            {opt.text.length > 52 ? opt.text.slice(0, 52) + '…' : opt.text}
-          </button>
-        ))}
-      </div>
-      <input
-        type="text"
-        value={metaCustom[field.id] || ''}
-        onChange={(e) => handleMetaCustomChange(field.id, e.target.value)}
-        placeholder="Свой вариант..."
-        className={siteUi.input}
-      />
-    </div>
-  );
 
   return (
     <PageContainer>
@@ -224,7 +154,7 @@ export function DeveloperSinglePagePage() {
               Вводится в Qwen, используя агент «Артефакты». Режим позволяет генерировать HTML/CSS/JS код и сразу видеть
               результат в чате.
             </p>
-            <a href={QWEN_ARTIFACTS_URL} target="_blank" rel="noreferrer" className={siteUi.ctaButton}>
+            <a href={QWEN_ARTIFACTS_URL} target="_blank" rel="noopener noreferrer" className={siteUi.ctaButton}>
               <ExternalLink className="w-4 h-4" />
               Открыть Qwen → Артефакты
             </a>
@@ -247,10 +177,10 @@ export function DeveloperSinglePagePage() {
       <div className={cn(siteUi.sectionCard, 'rounded-2xl p-6 mb-8')}>
         <h2 className="text-xl font-semibold text-zinc-900 mb-4">Инструкция: как создать приложение</h2>
         <ol className="space-y-4">
-          {INSTRUCTION_STEPS.map((step, i) => (
-            <li key={i} className="flex gap-3">
+          {DEVELOPER_ALGORITHM_STEPS.map((step, index) => (
+            <li key={step} className="flex gap-3">
               <span className="shrink-0 w-8 h-8 rounded-full bg-zinc-900 text-white text-sm font-medium flex items-center justify-center">
-                {i + 1}
+                {index + 1}
               </span>
               <span className="text-zinc-700 pt-1">{step}</span>
             </li>
@@ -260,29 +190,23 @@ export function DeveloperSinglePagePage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <div className={siteUi.sectionCard}>
-            <div className="mb-4">
-              <h2 className={siteUi.sectionHeading}>
-                <span>🧩</span>
-                Артефакт
-              </h2>
-              <WhyHint>Категория и тип задают сценарий и шаблон задачи в промпте.</WhyHint>
-            </div>
+          <PromptSectionCard icon="🧩" label="Артефакт" why="Категория и тип задают сценарий и шаблон задачи в промпте.">
             <div className="space-y-5">
               <div>
                 <p className={siteUi.fieldLabel}>Категория</p>
                 <div className="flex flex-wrap gap-2">
-                  {artifactsConfig.categories.map((c) => (
+                  {artifactsConfig.categories.map((item) => (
                     <button
-                      key={c.id}
+                      key={item.id}
                       type="button"
-                      onClick={() => setCategoryId(c.id)}
+                      aria-pressed={category === item.id}
+                      onClick={() => setCategoryId(item.id)}
                       className={cn(
                         siteUi.navPillBase,
-                        category === c.id ? 'bg-blue-600 text-white hover:bg-blue-700' : siteUi.navPillOff
+                        category === item.id ? 'bg-blue-600 text-white hover:bg-blue-700' : siteUi.navPillOff
                       )}
                     >
-                      {c.icon} {c.name}
+                      {item.icon} {item.name}
                     </button>
                   ))}
                 </div>
@@ -300,17 +224,18 @@ export function DeveloperSinglePagePage() {
               <div>
                 <p className={siteUi.fieldLabel}>Тип артефакта</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[420px] overflow-y-auto pr-1">
-                  {availableTypes.map((t) => (
+                  {availableTypes.map((item) => (
                     <button
-                      key={t.id}
+                      key={item.id}
                       type="button"
-                      onClick={() => setType(t.id)}
+                      aria-pressed={type === item.id}
+                      onClick={() => setType(item.id)}
                       className={cn(
                         'text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all',
-                        type === t.id ? siteUi.typeTileOn : siteUi.typeTileOff
+                        type === item.id ? siteUi.typeTileOn : siteUi.typeTileOff
                       )}
                     >
-                      {t.name}
+                      {item.name}
                     </button>
                   ))}
                 </div>
@@ -318,48 +243,50 @@ export function DeveloperSinglePagePage() {
               <div>
                 <p className={siteUi.fieldLabel}>Тема оформления (UI)</p>
                 <div className="flex flex-wrap gap-2">
-                  {artifactsConfig.defaults.styles.map((s) => (
+                  {artifactsConfig.defaults.styles.map((item) => (
                     <button
-                      key={s.id}
+                      key={item.id}
                       type="button"
-                      onClick={() => setStyle(s.id)}
+                      aria-pressed={style === item.id}
+                      onClick={() => setStyle(item.id)}
                       className={cn(
                         siteUi.navPillBase,
-                        style === s.id ? 'bg-blue-600 text-white hover:bg-blue-700' : siteUi.navPillOff
+                        style === item.id ? 'bg-blue-600 text-white hover:bg-blue-700' : siteUi.navPillOff
                       )}
                     >
-                      {s.name}
+                      {item.name}
                     </button>
                   ))}
                 </div>
               </div>
             </div>
-          </div>
+          </PromptSectionCard>
 
           {spaPromptSections.map((section) => (
-            <div key={section.id} className={siteUi.sectionCard}>
-              <div className="mb-4">
-                <h2 className={siteUi.sectionHeading}>
-                  <span>{section.icon}</span>
-                  {section.label}
-                </h2>
-                <WhyHint>{section.why}</WhyHint>
+            <PromptSectionCard key={section.id} icon={section.icon} label={section.label} why={section.why}>
+              <div className="space-y-5">
+                {section.fields.map((field) => (
+                  <PromptFieldBlock
+                    key={field.id}
+                    fieldId={field.id}
+                    label={field.label}
+                    options={field.options}
+                    selectedText={getMetaValue(field.id)}
+                    customValue={metaCustom[field.id] || ''}
+                    onSelect={handleMetaSelect}
+                    onCustomChange={handleMetaCustomChange}
+                  />
+                ))}
               </div>
-              <div className="space-y-5">{section.fields.map(renderMetaField)}</div>
-            </div>
+            </PromptSectionCard>
           ))}
 
           {templateKeys.length > 0 && (
-            <div className={siteUi.sectionCard}>
-              <div className="mb-4">
-                <h2 className={siteUi.sectionHeading}>
-                  <span>⚙️</span>
-                  Параметры типа артефакта
-                </h2>
-                <WhyHint>
-                  Эти значения подставляются в шаблон задачи вместо плейсхолдеров {'{questionsCount}'}, {'{data}'} и т.д.
-                </WhyHint>
-              </div>
+            <PromptSectionCard
+              icon="⚙️"
+              label="Параметры типа артефакта"
+              why={`Эти значения подставляются в шаблон задачи вместо плейсхолдеров {questionsCount}, {data} и т.д.`}
+            >
               <div className="space-y-4">
                 {templateKeys.map((key) => (
                   <div key={key}>
@@ -381,131 +308,48 @@ export function DeveloperSinglePagePage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </PromptSectionCard>
           )}
 
-          <div className={siteUi.sectionCard}>
-            <div className="mb-4">
-              <h2 className={siteUi.sectionHeading}>
-                <span>⚫</span>
-                Требования к качеству кода
-              </h2>
-              <WhyHint>Дополняют блок «ПРАВИЛА» в промпте — явные критерии для генерации.</WhyHint>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {SPA_QUALITY_OPTIONS.map((opt) => (
-                <label
-                  key={opt.id}
-                  className={cn(
-                    siteUi.checkboxLabelBase,
-                    qualityIds.includes(opt.id) ? siteUi.checkboxOn : siteUi.checkboxOff
-                  )}
-                >
-                  <input
-                    type="checkbox"
-                    checked={qualityIds.includes(opt.id)}
-                    onChange={() => toggleQuality(opt.id)}
-                    className={siteUi.checkboxInput}
-                  />
-                  {opt.text}
-                </label>
-              ))}
-            </div>
-          </div>
+          <PromptSectionCard
+            icon="⚫"
+            label="Требования к качеству кода"
+            why="Дополняют блок «ПРАВИЛА» в промпте — явные критерии для генерации."
+          >
+            <CheckboxOptionGroup
+              options={SPA_QUALITY_OPTIONS}
+              selectedIds={qualityIds}
+              onToggle={toggleQuality}
+            />
+          </PromptSectionCard>
 
-          <div className={siteUi.sectionCard}>
-            <div className="mb-4">
-              <h2 className={siteUi.sectionHeading}>
-                <span>🚫</span>
-                Исключить
-              </h2>
-              <WhyHint>Типичные антипаттерны для безопасного vanilla SPA в одном файле.</WhyHint>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {SPA_NEGATIVE_OPTIONS.map((opt) => (
-                <label
-                  key={opt.id}
-                  className={cn(
-                    siteUi.checkboxLabelBase,
-                    negativeIds.includes(opt.id) ? siteUi.checkboxOn : siteUi.checkboxOff
-                  )}
-                >
-                  <input
-                    type="checkbox"
-                    checked={negativeIds.includes(opt.id)}
-                    onChange={() => toggleNegative(opt.id)}
-                    className={siteUi.checkboxInput}
-                  />
-                  {opt.text}
-                </label>
-              ))}
-            </div>
-          </div>
+          <PromptSectionCard
+            icon="🚫"
+            label="Исключить"
+            why="Типичные антипаттерны для безопасного vanilla SPA в одном файле."
+          >
+            <CheckboxOptionGroup
+              options={SPA_NEGATIVE_OPTIONS}
+              selectedIds={negativeIds}
+              onToggle={toggleNegative}
+            />
+          </PromptSectionCard>
         </div>
 
         <div className="lg:col-span-1">
-          <div className="lg:sticky lg:top-24 space-y-4">
-            <div className={siteUi.sidebarCard}>
-              <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-                <h3 className="font-semibold text-zinc-900">Ваш промпт</h3>
-                <div className="flex gap-2">
-                  <button type="button" onClick={handleReset} className={siteUi.iconButton} title="Сбросить">
-                    <RotateCcw className="w-4 h-4" />
-                  </button>
-                  <button type="button" onClick={handleRandomize} className={siteUi.iconButton} title="Случайный выбор">
-                    <Shuffle className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              {enhance && (
-                <p className={siteUi.enhanceNote}>
-                  Усиление: дополнительный пункт в правилах про UX, граничные случаи и комментарии к логике
-                </p>
-              )}
-
-              <textarea value={fullPrompt} readOnly rows={18} className={siteUi.textareaPromptTall} />
-
-              <button
-                type="button"
-                onClick={() => setEnhance((e) => !e)}
-                className={cn('w-full mt-3 flex items-center justify-center gap-2', siteUi.secondaryButton)}
-              >
-                <Sparkles className="w-5 h-5" />
-                Сделать промпт сильнее
-              </button>
-
-              <button
-                type="button"
-                onClick={handleCopy}
-                className={cn(copied ? siteUi.primaryButtonSuccess : siteUi.primaryButton, 'mt-3')}
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-5 h-5" />
-                    Скопировано!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-5 h-5" />
-                    Копировать промпт
-                  </>
-                )}
-              </button>
-
-              <div className="mt-6 pt-4 border-t border-zinc-200">
-                <h3 className="text-sm font-medium text-zinc-900 mb-3">Где использовать?</h3>
-                <div className="flex flex-wrap gap-2">
-                  {serviceLinks.map((s) => (
-                    <a key={s.id} href={s.url} target="_blank" rel="noreferrer" className={siteUi.linkOutbound}>
-                      <ExternalLink className="w-4 h-4" />
-                      {s.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          <PromptBuilderSidebar
+            fullPrompt={fullPrompt}
+            enhance={enhance}
+            onEnhanceToggle={() => setEnhance((value) => !value)}
+            enhanceNote="Усиление: дополнительный пункт в правилах про UX, граничные случаи и комментарии к логике"
+            enhanceLabel="Сделать промпт сильнее"
+            onReset={handleReset}
+            onRandomize={handleRandomize}
+            serviceLinksTitle="Где использовать?"
+            serviceLinks={SERVICE_LINKS.developer}
+            textareaRows={18}
+            textareaClassName={siteUi.textareaPromptTall}
+          />
         </div>
       </div>
     </PageContainer>
