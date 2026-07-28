@@ -2,6 +2,15 @@ export type MaterialType = 'tool' | 'prompt';
 export type Category = 'editor' | 'manager' | 'designer' | 'developer';
 export type MaterialLayout = 'prompt' | 'tool';
 
+export type MaterialAudience = 'gossluzhba' | 'obrazovanie' | 'molodezhnaya-politika' | 'ngo';
+
+export const AUDIENCE_LABELS: Record<MaterialAudience, string> = {
+  gossluzhba: 'Государственная и муниципальная служба',
+  obrazovanie: 'Образование',
+  'molodezhnaya-politika': 'Молодёжная политика',
+  ngo: 'НКО и общественные объединения',
+};
+
 export const PLACEHOLDER_IMAGE =
   'data:image/svg+xml,' +
   encodeURIComponent(
@@ -23,8 +32,22 @@ export interface Material {
   layout?: MaterialLayout;
   tags: string[];
   categories: Category[];
+  /** Необязательное. Материал без audience виден при любом значении фильтра. */
+  audience?: MaterialAudience[];
   type: MaterialType;
   files?: { name: string; url: string }[];
   url?: string;
   example_url?: string;
+}
+
+/** Материал только с конструктором — без отдельной страницы с текстом промпта. */
+export function materialPrimaryPath(material: Material): string {
+  if (
+    material.builderRoute &&
+    !material.prompt &&
+    !(material.prompts && material.prompts.length > 0)
+  ) {
+    return material.builderRoute;
+  }
+  return `/material/${material.id}`;
 }

@@ -73,4 +73,6 @@ export const BUILDER_ROUTES: Record<string, string> = {
   prompt_033: '/developer/single-page-apps',
   prompt_034: '/developer/single-page-apps',
   prompt_035: '/developer/single-page-apps',
+  'hr-gov-prompts': '/manager/hr-gov-prompt-builder',
+  'teacher-material-builder': '/teacher/material-builder',
 };

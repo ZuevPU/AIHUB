@@ -4,24 +4,24 @@ import { artifactsConfig } from '@/data/artifactsConfig';
 import { randomizeSelections } from '@/data/artifactsPromptGenerator';
 import {
   spaPromptSections,
-  SPA_QUALITY_OPTIONS,
-  SPA_NEGATIVE_OPTIONS,
   SPA_DEFAULT_TEMPLATE_OPTIONS,
   SPA_PLACEHOLDER_LABELS,
   buildSpaPrompt,
   getInitialSpaSelections,
   getTemplateOptionKeysForUi,
+  SPA_QUICK_PRESETS,
+  SPA_UI_STYLE_PRESETS,
+  getComplexityKeyFromMeta,
+  filterArtifactTypesByComplexity,
 } from '@/data/promptBuilderSpaConfig';
 import { DEVELOPER_ALGORITHM_STEPS, SERVICE_LINKS } from '@/data/serviceLinks';
 import { randomizeSelectionsFromSections } from '@/data/promptBuilder/shared';
-import { useToggleList } from '@/hooks/usePromptBuilderState';
 import { cn } from '@/lib/utils';
 import { siteUi } from '@/lib/siteUi';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { BackLink } from '@/components/layout/BackLink';
 import { PromptSectionCard } from '@/components/promptBuilder/PromptSectionCard';
 import { PromptFieldBlock } from '@/components/promptBuilder/PromptFieldBlock';
-import { CheckboxOptionGroup } from '@/components/promptBuilder/CheckboxOptionGroup';
 import { PromptBuilderSidebar } from '@/components/promptBuilder/PromptBuilderSidebar';
 
 const QWEN_ARTIFACTS_URL = 'https://chat.qwen.ai/';
@@ -33,22 +33,37 @@ function randomizeMetaSelections(): Record<string, string> {
 export function DeveloperSinglePagePage() {
   const [category, setCategory] = useState('education');
   const [type, setType] = useState('quiz');
-  const [style, setStyle] = useState('light');
+  const [style, setStyle] = useState('apple');
+  const [styleCustom, setStyleCustom] = useState('');
   const [topic, setTopic] = useState('');
   const [metaSelections, setMetaSelections] = useState<Record<string, string>>(getInitialSpaSelections);
   const [metaCustom, setMetaCustom] = useState<Record<string, string>>({});
   const [templateOptions, setTemplateOptions] = useState<Record<string, string>>({});
-  const { ids: qualityIds, setIds: setQualityIds, toggle: toggleQuality } = useToggleList(() =>
-    SPA_QUALITY_OPTIONS.map((q) => q.id)
-  );
-  const { ids: negativeIds, setIds: setNegativeIds, toggle: toggleNegative } = useToggleList(() =>
-    SPA_NEGATIVE_OPTIONS.map((n) => n.id)
-  );
   const [enhance, setEnhance] = useState(false);
 
+  const getMetaValue = (fieldId: string) => {
+    const custom = metaCustom[fieldId]?.trim();
+    if (custom) return custom;
+    return metaSelections[fieldId] || '';
+  };
+
   const categoryData = artifactsConfig.categories.find((item) => item.id === category);
-  const availableTypes = categoryData?.types ?? [];
-  const typeData = categoryData?.types.find((item) => item.id === type);
+  const complexityKey = useMemo(() => {
+    const text = metaCustom.complexity?.trim() || metaSelections.complexity || '';
+    return getComplexityKeyFromMeta(text);
+  }, [metaCustom.complexity, metaSelections.complexity]);
+  const availableTypes = useMemo(() => {
+    const all = categoryData?.types ?? [];
+    return filterArtifactTypesByComplexity(all, complexityKey);
+  }, [categoryData?.types, complexityKey]);
+  const typeData = availableTypes.find((item) => item.id === type) ?? categoryData?.types.find((item) => item.id === type);
+
+  useEffect(() => {
+    if (availableTypes.length === 0) return;
+    if (!availableTypes.some((t) => t.id === type)) {
+      setType(availableTypes[0].id);
+    }
+  }, [availableTypes, type]);
 
   useEffect(() => {
     const template = typeData?.promptTemplate ?? '';
@@ -61,12 +76,6 @@ export function DeveloperSinglePagePage() {
       return next;
     });
   }, [category, type, typeData?.promptTemplate]);
-
-  const getMetaValue = (fieldId: string) => {
-    const custom = metaCustom[fieldId]?.trim();
-    if (custom) return custom;
-    return metaSelections[fieldId] || '';
-  };
 
   const handleMetaSelect = (fieldId: string, text: string) => {
     setMetaSelections((prev) => ({ ...prev, [fieldId]: text }));
@@ -83,15 +92,14 @@ export function DeveloperSinglePagePage() {
         category,
         type,
         styleId: style,
+        styleCustom,
         topic,
         templateOptions,
         values: metaSelections,
         custom: metaCustom,
-        qualityIds,
-        negativeIds,
         enhance,
       }),
-    [category, type, style, topic, templateOptions, metaSelections, metaCustom, qualityIds, negativeIds, enhance]
+    [category, type, style, styleCustom, topic, templateOptions, metaSelections, metaCustom, enhance]
   );
 
   const templateKeys = useMemo(
@@ -102,12 +110,11 @@ export function DeveloperSinglePagePage() {
   const handleReset = () => {
     setCategory('education');
     setType('quiz');
-    setStyle('light');
+    setStyle('apple');
+    setStyleCustom('');
     setTopic('');
     setMetaSelections(getInitialSpaSelections());
     setMetaCustom({});
-    setQualityIds(SPA_QUALITY_OPTIONS.map((q) => q.id));
-    setNegativeIds(SPA_NEGATIVE_OPTIONS.map((n) => n.id));
     setEnhance(false);
   };
 
@@ -119,8 +126,6 @@ export function DeveloperSinglePagePage() {
     setTopic('');
     setMetaSelections(randomizeMetaSelections());
     setMetaCustom({});
-    setQualityIds(SPA_QUALITY_OPTIONS.filter(() => Math.random() > 0.2).map((q) => q.id));
-    setNegativeIds(SPA_NEGATIVE_OPTIONS.filter(() => Math.random() > 0.25).map((n) => n.id));
     setEnhance(false);
   };
 
@@ -131,17 +136,30 @@ export function DeveloperSinglePagePage() {
     setType(firstType?.id ?? 'quiz');
   };
 
+  const applyQuickPreset = (presetId: string) => {
+    const preset = SPA_QUICK_PRESETS.find((p) => p.id === presetId);
+    if (!preset) return;
+    setCategory(preset.category);
+    setType(preset.type);
+    setStyle(preset.style);
+    setStyleCustom('');
+    setTopic(preset.topic);
+    setMetaSelections((prev) => ({ ...prev, ...preset.meta }));
+    setMetaCustom({});
+    setEnhance(true);
+  };
+
   return (
     <PageContainer>
-      <BackLink to="/catalog?category=developer">Назад к каталогу</BackLink>
+      <BackLink to="/catalog?type=prompt&category=developer">Назад к каталогу</BackLink>
 
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl mb-1">
           Конструктор промптов: одностраничные приложения
         </h1>
         <p className="text-zinc-600 text-lg">
-          Единый структурированный промпт: контекст → задача → техтребования → приёмка → правила. Для Qwen Артефакты и
-          других чатов с генерацией кода.
+          Единый структурированный промпт: контекст → задача → техтребования → приёмка → правила. Критерии качества и
+          список «исключить» уже встроены в текст — настраивать не нужно.
         </p>
       </div>
 
@@ -193,6 +211,26 @@ export function DeveloperSinglePagePage() {
           <PromptSectionCard icon="🧩" label="Артефакт" why="Категория и тип задают сценарий и шаблон задачи в промпте.">
             <div className="space-y-5">
               <div>
+                <p className={siteUi.fieldLabel}>Быстрый старт</p>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {SPA_QUICK_PRESETS.map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => applyQuickPreset(preset.id)}
+                      className={cn(
+                        siteUi.bentoPromptCard,
+                        'p-4 hover:scale-100',
+                        'border-zinc-200 border-2'
+                      )}
+                    >
+                      <span className="font-semibold text-zinc-900">{preset.label}</span>
+                      <span className="mt-1 block text-sm text-zinc-500">{preset.description}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
                 <p className={siteUi.fieldLabel}>Категория</p>
                 <div className="flex flex-wrap gap-2">
                   {artifactsConfig.categories.map((item) => (
@@ -222,7 +260,12 @@ export function DeveloperSinglePagePage() {
                 />
               </div>
               <div>
-                <p className={siteUi.fieldLabel}>Тип артефакта</p>
+                <p className={siteUi.fieldLabel}>
+                  Тип артефакта
+                  <span className="ml-2 normal-case font-normal text-zinc-400">
+                    (фильтр по сложности: {complexityKey === 'simple' ? 'простая' : complexityKey === 'medium' ? 'средняя' : 'высокая'})
+                  </span>
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[420px] overflow-y-auto pr-1">
                   {availableTypes.map((item) => (
                     <button
@@ -242,22 +285,40 @@ export function DeveloperSinglePagePage() {
               </div>
               <div>
                 <p className={siteUi.fieldLabel}>Тема оформления (UI)</p>
-                <div className="flex flex-wrap gap-2">
-                  {artifactsConfig.defaults.styles.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      aria-pressed={style === item.id}
-                      onClick={() => setStyle(item.id)}
-                      className={cn(
-                        siteUi.navPillBase,
-                        style === item.id ? 'bg-blue-600 text-white hover:bg-blue-700' : siteUi.navPillOff
-                      )}
-                    >
-                      {item.name}
-                    </button>
-                  ))}
+                <p className="mb-3 text-sm text-zinc-500">
+                  Пресет задаёт описание для блока «Визуальный стиль» и плейсхолдера {'{style}'} в задаче. Свой текст
+                  переопределяет выбранную плашку.
+                </p>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {SPA_UI_STYLE_PRESETS.map((item) => {
+                    const isSelected = style === item.id && !styleCustom.trim();
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        aria-pressed={isSelected}
+                        onClick={() => {
+                          setStyle(item.id);
+                          setStyleCustom('');
+                        }}
+                        className={cn(
+                          'text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all',
+                          isSelected ? siteUi.typeTileOn : siteUi.typeTileOff
+                        )}
+                      >
+                        <span className="block text-zinc-900">{item.name}</span>
+                        <span className="mt-0.5 block text-xs font-normal text-zinc-500">{item.hint}</span>
+                      </button>
+                    );
+                  })}
                 </div>
+                <input
+                  type="text"
+                  value={styleCustom}
+                  onChange={(e) => setStyleCustom(e.target.value)}
+                  placeholder="Свой вариант: например, пастель и мягкие тени в духе Notion, или бренд-цвета #0066CC…"
+                  className={cn(siteUi.inputRoundedXl, 'mt-3')}
+                />
               </div>
             </div>
           </PromptSectionCard>
@@ -310,30 +371,6 @@ export function DeveloperSinglePagePage() {
               </div>
             </PromptSectionCard>
           )}
-
-          <PromptSectionCard
-            icon="⚫"
-            label="Требования к качеству кода"
-            why="Дополняют блок «ПРАВИЛА» в промпте — явные критерии для генерации."
-          >
-            <CheckboxOptionGroup
-              options={SPA_QUALITY_OPTIONS}
-              selectedIds={qualityIds}
-              onToggle={toggleQuality}
-            />
-          </PromptSectionCard>
-
-          <PromptSectionCard
-            icon="🚫"
-            label="Исключить"
-            why="Типичные антипаттерны для безопасного vanilla SPA в одном файле."
-          >
-            <CheckboxOptionGroup
-              options={SPA_NEGATIVE_OPTIONS}
-              selectedIds={negativeIds}
-              onToggle={toggleNegative}
-            />
-          </PromptSectionCard>
         </div>
 
         <div className="lg:col-span-1">
@@ -341,7 +378,7 @@ export function DeveloperSinglePagePage() {
             fullPrompt={fullPrompt}
             enhance={enhance}
             onEnhanceToggle={() => setEnhance((value) => !value)}
-            enhanceNote="Усиление: дополнительный пункт в правилах про UX, граничные случаи и комментарии к логике"
+            enhanceNote="Добавляет UX (старт/финал, граничные случаи) и усиливает блок правил; пресеты включают его автоматически"
             enhanceLabel="Сделать промпт сильнее"
             onReset={handleReset}
             onRandomize={handleRandomize}

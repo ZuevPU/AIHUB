@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Material } from '@/data/materials';
+import { Material, materialPrimaryPath } from '@/data/materials';
 import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
 import { Badge } from './ui/badge';
 import { ArrowRight, ExternalLink, Wrench, MessageSquare } from 'lucide-react';
@@ -59,6 +59,8 @@ export function MaterialCard({ material }: MaterialCardProps) {
   const gradient = getGradientForId(material.id);
   const isDeveloper = material.categories.includes('developer');
   const displayTitle = isDeveloper ? material.title : shortTitle;
+  const primaryPath = materialPrimaryPath(material);
+  const opensBuilder = primaryPath === material.builderRoute;
 
   return (
     <Card className="group flex flex-col overflow-hidden transition-all hover:shadow-md hover:border-zinc-300">
@@ -84,7 +86,7 @@ export function MaterialCard({ material }: MaterialCardProps) {
             </Badge>
           </Link>
           <Link
-            to={`/catalog?category=${material.categories[0]}`}
+            to={`/catalog?type=${material.type}&category=${material.categories[0]}`}
             onClick={(e) => e.stopPropagation()}
             className="no-underline"
           >
@@ -109,7 +111,7 @@ export function MaterialCard({ material }: MaterialCardProps) {
           {material.tags.slice(0, 3).map((tag) => (
             <Link
               key={tag}
-              to={`/catalog?q=${encodeURIComponent(tag)}`}
+              to={`/catalog?type=${material.type}&q=${encodeURIComponent(tag)}`}
               onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 transition-colors cursor-pointer no-underline"
             >
@@ -127,10 +129,10 @@ export function MaterialCard({ material }: MaterialCardProps) {
       <CardFooter className="p-5 pt-0">
         <div className="flex w-full gap-2">
           <Link
-            to={`/material/${material.id}`}
+            to={primaryPath}
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2"
           >
-            Подробнее
+            {opensBuilder ? 'Открыть конструктор' : 'Подробнее'}
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
           {material.url && (

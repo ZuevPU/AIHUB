@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { materials } from '@/data/materials';
+import { materials, materialPrimaryPath } from '@/data/materials';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -40,6 +40,14 @@ export function MaterialDetailPage() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
+
+  useEffect(() => {
+    if (!material) return;
+    const primary = materialPrimaryPath(material);
+    if (primary !== `/material/${material.id}`) {
+      navigate(primary, { replace: true });
+    }
+  }, [material, navigate]);
 
   if (!material) {
     return (
@@ -86,7 +94,7 @@ export function MaterialDetailPage() {
                 {typeLabels[material.type]}
               </Badge>
             </Link>
-            <Link to={`/catalog?category=${material.categories[0]}`} className="no-underline">
+            <Link to={`/catalog?type=${material.type}&category=${material.categories[0]}`} className="no-underline">
               <Badge variant="secondary" className="bg-zinc-100 text-zinc-600 px-3 py-1 cursor-pointer hover:bg-zinc-200 transition-colors">
                 {categoryLabels[material.categories[0]]}
               </Badge>
@@ -99,7 +107,7 @@ export function MaterialDetailPage() {
             {material.tags.map((tag) => (
               <Link
                 key={tag}
-                to={`/catalog?q=${encodeURIComponent(tag)}`}
+                to={`/catalog?type=${material.type}&q=${encodeURIComponent(tag)}`}
                 className="inline-flex items-center rounded-md bg-zinc-50 px-2.5 py-1 text-xs font-medium text-zinc-500 border border-zinc-200 hover:bg-zinc-100 transition-colors cursor-pointer no-underline"
               >
                 #{tag}
@@ -254,7 +262,7 @@ export function MaterialDetailPage() {
                     {typeLabels[material.type]}
                   </Badge>
                 </Link>
-                <Link to={`/catalog?category=${material.categories[0]}`} className="no-underline">
+                <Link to={`/catalog?type=${material.type}&category=${material.categories[0]}`} className="no-underline">
                   <Badge variant="secondary" className="bg-zinc-100 text-zinc-600 px-3 py-1 cursor-pointer hover:bg-zinc-200 transition-colors">
                     {categoryLabels[material.categories[0]]}
                   </Badge>
@@ -281,7 +289,7 @@ export function MaterialDetailPage() {
                 {material.tags.map((tag) => (
                   <Link
                     key={tag}
-                    to={`/catalog?q=${encodeURIComponent(tag)}`}
+                    to={`/catalog?type=${material.type}&q=${encodeURIComponent(tag)}`}
                     className="inline-flex items-center rounded-md bg-zinc-50 px-2.5 py-1 text-xs font-medium text-zinc-500 border border-zinc-200 hover:bg-zinc-100 transition-colors cursor-pointer no-underline"
                   >
                     #{tag}

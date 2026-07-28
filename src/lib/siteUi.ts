@@ -79,4 +79,12 @@ export const siteUi = {
   /** Карточка «Собери промпт» на главной / в каталоге */
   bentoPromptCard:
     'text-left rounded-2xl border-2 border-zinc-200 bg-white p-6 transition-all hover:border-zinc-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer',
+
+  /** Главная: hero */
+  heroTitle: 'mb-6 max-w-4xl text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl md:text-7xl',
+  heroSubtitle: 'mb-10 max-w-2xl text-base text-zinc-600 sm:text-lg',
+  heroSection: 'relative overflow-hidden bg-white py-16 sm:py-24 md:py-32',
+
+  /** Минимальная зона нажатия (44px) */
+  mobileMinTouch: 'min-h-11',
 } as const;

@@ -21,10 +21,10 @@ export function Footer() {
           <div>
             <h3 className="font-medium text-zinc-900 mb-4">Категории</h3>
             <ul className="space-y-2 text-sm text-zinc-500">
-              <li><Link to="/catalog?category=editor" className="hover:text-zinc-900 transition-colors">Редактор</Link></li>
-              <li><Link to="/catalog?category=manager" className="hover:text-zinc-900 transition-colors">Менеджер</Link></li>
-              <li><Link to="/catalog?category=designer" className="hover:text-zinc-900 transition-colors">Дизайнер</Link></li>
-              <li><Link to="/catalog?category=developer" className="hover:text-zinc-900 transition-colors">Разработчик</Link></li>
+              <li><Link to="/catalog?type=prompt&category=editor" className="hover:text-zinc-900 transition-colors">Редактор</Link></li>
+              <li><Link to="/catalog?type=prompt&category=manager" className="hover:text-zinc-900 transition-colors">Менеджер</Link></li>
+              <li><Link to="/catalog?type=prompt&category=designer" className="hover:text-zinc-900 transition-colors">Дизайнер</Link></li>
+              <li><Link to="/catalog?type=prompt&category=developer" className="hover:text-zinc-900 transition-colors">Разработчик</Link></li>
             </ul>
           </div>
           <div>

@@ -4,6 +4,7 @@ export { editorPrompts } from './prompts/editor';
 export { managerPrompts } from './prompts/manager';
 export { designerPrompts } from './prompts/designer';
 export { developerPrompts } from './prompts/developer';
+export { teacherPrompts } from './prompts/teacher';
 
 import type { Material } from './types';
 import { tools } from './tools';
@@ -11,12 +12,18 @@ import { editorPrompts } from './prompts/editor';
 import { managerPrompts } from './prompts/manager';
 import { designerPrompts } from './prompts/designer';
 import { developerPrompts } from './prompts/developer';
+import { teacherPrompts } from './prompts/teacher';
 
 const promptById = new Map<string, Material>(
-  [...editorPrompts, ...managerPrompts, ...designerPrompts, ...developerPrompts].map((p) => [p.id, p])
+  [...editorPrompts, ...managerPrompts, ...designerPrompts, ...developerPrompts, ...teacherPrompts].map((p) => [
+    p.id,
+    p,
+  ])
 );
 
 const PROMPT_ORDER = [
+  'teacher-material-builder',
+  'hr-gov-prompts',
   'prompt_007',
   'prompt_008',
   'prompt_009',

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useMemo, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { materials, MaterialType, Category } from '@/data/materials';
+import { materials, MaterialType, Category, MaterialAudience, AUDIENCE_LABELS } from '@/data/materials';
 import { MaterialCard } from '@/components/MaterialCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,22 +13,30 @@ export function CatalogPage() {
   const location = useLocation();
   const navigate = useNavigate();
   
-  const [activeType, setActiveType] = useState<MaterialType | 'all'>('all');
+  const [activeType, setActiveType] = useState<MaterialType | 'all'>('prompt');
   const [activeCategory, setActiveCategory] = useState<Category | 'all'>('all');
+  const [activeAudience, setActiveAudience] = useState<MaterialAudience | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Parse URL params on mount and when location changes
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const typeParam = params.get('type') as MaterialType | null;
-    const categoryParam = params.get('category') as Category | null;
-    const qParam = params.get('q');
+    const typeParam = params.get('type');
 
-    if (typeParam && ['tool', 'prompt'].includes(typeParam)) {
+    if (typeParam === 'all') {
+      setActiveType('all');
+    } else if (typeParam === 'tool' || typeParam === 'prompt') {
       setActiveType(typeParam);
     } else {
-      setActiveType('all');
+      setActiveType('prompt');
+      const syncParams = new URLSearchParams(location.search);
+      syncParams.set('type', 'prompt');
+      navigate(`/catalog?${syncParams.toString()}`, { replace: true });
     }
+
+    const categoryParam = params.get('category') as Category | null;
+    const audienceParam = params.get('audience') as MaterialAudience | null;
+    const qParam = params.get('q');
 
     if (categoryParam && ['editor', 'manager', 'designer', 'developer'].includes(categoryParam)) {
       setActiveCategory(categoryParam);
@@ -36,28 +44,43 @@ export function CatalogPage() {
       setActiveCategory('all');
     }
 
+    const audienceKeys = Object.keys(AUDIENCE_LABELS) as MaterialAudience[];
+    if (audienceParam && audienceKeys.includes(audienceParam)) {
+      setActiveAudience(audienceParam);
+    } else {
+      setActiveAudience('all');
+    }
+
     if (qParam) {
       setSearchQuery(qParam);
     } else {
       setSearchQuery('');
     }
-  }, [location.search]);
+  }, [location.search, navigate]);
 
   // Update URL when filters change
-  const updateFilters = (type: MaterialType | 'all', category: Category | 'all') => {
+  const updateFilters = (
+    type: MaterialType | 'all',
+    category: Category | 'all',
+    audience: MaterialAudience | 'all'
+  ) => {
     const params = new URLSearchParams(location.search);
-    
-    if (type === 'all') params.delete('type');
+
+    if (type === 'all') params.set('type', 'all');
+    else if (type === 'prompt') params.set('type', 'prompt');
     else params.set('type', type);
-    
+
     if (category === 'all') params.delete('category');
     else params.set('category', category);
-    
+
+    if (audience === 'all') params.delete('audience');
+    else params.set('audience', audience);
+
     navigate(`/catalog?${params.toString()}`, { replace: true });
   };
 
   const clearFilters = () => {
-    navigate('/catalog');
+    navigate('/catalog?type=prompt');
   };
 
   const filteredMaterials = useMemo(() => {
@@ -67,7 +90,16 @@ export function CatalogPage() {
       
       // Category filter
       if (activeCategory !== 'all' && !material.categories.includes(activeCategory)) return false;
-      
+
+      // Audience filter: материалы без audience — универсальные
+      if (
+        activeAudience !== 'all' &&
+        material.audience &&
+        !material.audience.includes(activeAudience)
+      ) {
+        return false;
+      }
+
       // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
@@ -80,7 +112,7 @@ export function CatalogPage() {
       
       return true;
     });
-  }, [activeType, activeCategory, searchQuery]);
+  }, [activeType, activeCategory, activeAudience, searchQuery]);
 
   const categories: { id: Category | 'all'; label: string }[] = [
     { id: 'all', label: 'Все категории' },
@@ -96,14 +128,26 @@ export function CatalogPage() {
     { id: 'prompt', label: 'Промпты' },
   ];
 
-  const hasActiveFilters = activeType !== 'all' || activeCategory !== 'all' || searchQuery !== '';
+  const audiences: { id: MaterialAudience | 'all'; label: string }[] = [
+    { id: 'all', label: 'Для всех' },
+    ...(Object.entries(AUDIENCE_LABELS) as [MaterialAudience, string][]).map(([id, label]) => ({
+      id,
+      label,
+    })),
+  ];
+
+  const hasActiveFilters =
+    (activeType !== 'all' && activeType !== 'prompt') ||
+    activeCategory !== 'all' ||
+    activeAudience !== 'all' ||
+    searchQuery !== '';
 
   return (
     <PageWide>
       <div className="flex flex-col md:flex-row gap-8">
         {/* Sidebar Filters */}
         <aside className="w-full md:w-64 shrink-0">
-          <div className="sticky top-24 space-y-8">
+          <div className="sticky top-20 max-h-[50vh] space-y-8 overflow-y-auto sm:top-24 sm:max-h-none sm:overflow-visible">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-zinc-900 flex items-center gap-2">
                 <Filter className="w-4 h-4" />
@@ -123,7 +167,7 @@ export function CatalogPage() {
                 {types.map((type) => (
                   <button
                     key={type.id}
-                    onClick={() => updateFilters(type.id, activeCategory)}
+                    onClick={() => updateFilters(type.id, activeCategory, activeAudience)}
                     className={`text-left px-3 py-2 rounded-md text-sm transition-colors ${
                       activeType === type.id
                         ? 'bg-zinc-900 text-white font-medium'
@@ -142,7 +186,7 @@ export function CatalogPage() {
                 {categories.map((category) => (
                   <button
                     key={category.id}
-                    onClick={() => updateFilters(activeType, category.id)}
+                    onClick={() => updateFilters(activeType, category.id, activeAudience)}
                     className={`text-left px-3 py-2 rounded-md text-sm transition-colors ${
                       activeCategory === category.id
                         ? 'bg-zinc-900 text-white font-medium'
@@ -150,6 +194,25 @@ export function CatalogPage() {
                     }`}
                   >
                     {category.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium text-zinc-500 uppercase tracking-wider">Для кого</h3>
+              <div className="flex flex-col gap-2">
+                {audiences.map((audience) => (
+                  <button
+                    key={audience.id}
+                    onClick={() => updateFilters(activeType, activeCategory, audience.id)}
+                    className={`text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                      activeAudience === audience.id
+                        ? 'bg-zinc-900 text-white font-medium'
+                        : 'text-zinc-600 hover:bg-zinc-100'
+                    }`}
+                  >
+                    {audience.label}
                   </button>
                 ))}
               </div>

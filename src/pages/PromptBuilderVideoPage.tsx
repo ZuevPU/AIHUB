@@ -71,7 +71,7 @@ export function PromptBuilderVideoPage() {
 
   return (
     <PageContainer>
-      <BackLink to="/catalog?category=designer">Назад к каталогу</BackLink>
+      <BackLink to="/catalog?type=prompt&category=designer">Назад к каталогу</BackLink>
 
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl mb-1">

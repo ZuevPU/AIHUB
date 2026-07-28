@@ -17,10 +17,11 @@ export function Header() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/catalog?q=${encodeURIComponent(searchQuery)}`);
+    const q = searchQuery.trim();
+    if (q) {
+      navigate(`/catalog?type=prompt&q=${encodeURIComponent(q)}`);
     } else {
-      navigate('/catalog');
+      navigate('/catalog?type=prompt');
     }
   };
 

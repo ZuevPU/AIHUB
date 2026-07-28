@@ -30,6 +30,13 @@ const DeveloperSinglePagePage = lazy(() =>
   import('@/pages/DeveloperSinglePagePage').then((m) => ({ default: m.DeveloperSinglePagePage }))
 );
 
+const HrGovPromptBuilderPage = lazy(() =>
+  import('@/pages/HrGovPromptBuilderPage').then((m) => ({ default: m.HrGovPromptBuilderPage }))
+);
+const TeacherMaterialBuilderPage = lazy(() =>
+  import('@/pages/TeacherMaterialBuilderPage').then((m) => ({ default: m.TeacherMaterialBuilderPage }))
+);
+
 function Layout() {
   const { pathname, search } = useLocation();
   const isEmbedded = useIsEmbedded();
@@ -97,6 +104,22 @@ export default function App() {
               element={
                 <LazyPage>
                   <PromptBuilderAnalyticsPage />
+                </LazyPage>
+              }
+            />
+            <Route
+              path="manager/hr-gov-prompt-builder"
+              element={
+                <LazyPage>
+                  <HrGovPromptBuilderPage />
+                </LazyPage>
+              }
+            />
+            <Route
+              path="teacher/material-builder"
+              element={
+                <LazyPage>
+                  <TeacherMaterialBuilderPage />
                 </LazyPage>
               }
             />
