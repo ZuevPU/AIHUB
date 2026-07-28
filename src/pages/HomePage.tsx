@@ -55,33 +55,8 @@ export function HomePage() {
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">Собери свой промпт</h2>
             <p className="mt-4 text-lg text-zinc-600">
-              Конструкторы по сфере и по типу контента — соберите запрос по частям перед отправкой в нейросеть
+              Выберите тип контента и соберите запрос по частям — от изображений до одностраничных приложений
             </p>
-          </div>
-
-          <div className="mx-auto mb-14 max-w-4xl">
-            <h3 className="mb-4 text-center text-lg font-semibold text-zinc-900">Госслужба и образование</h3>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <BentoGridItem
-                title="Конструктор промптов для госслужащих"
-                description="Промпты для кадровой службы: документооборот, аналитика, найм. Уровень органа подставляется во все шаблоны."
-                icon={<ShieldCheck className="h-5 w-5 text-indigo-600" />}
-                className={cn(bentoPromptHover, 'ring-1 ring-indigo-100')}
-                onClick={() => navigate('/manager/hr-gov-prompt-builder')}
-              />
-              <BentoGridItem
-                title="Конструктор материалов для учителя"
-                description="Урок, задание, рабочий лист и интерактив — один профиль класса и эталонные промпты с проверкой согласованности."
-                icon={<GraduationCap className="h-5 w-5 text-blue-600" />}
-                className={cn(bentoPromptHover, 'ring-1 ring-blue-100')}
-                onClick={() => navigate('/teacher/material-builder')}
-              />
-            </div>
-          </div>
-
-          <div className="mb-6 text-center">
-            <h3 className="text-lg font-semibold text-zinc-900">По типу контента</h3>
-            <p className="mt-2 text-sm text-zinc-600">Изображения, видео, тексты, данные и веб-приложения</p>
           </div>
 
           <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -135,25 +110,23 @@ export function HomePage() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">Примеры использования</h2>
-            <p className="mt-4 text-lg text-zinc-600">
-              Готовые промпты в каталоге — по профессии или по аудитории «образование» и «госслужба»
-            </p>
+            <p className="mt-4 text-lg text-zinc-600">Промпты по профессии и отдельные конструкторы для госслужбы и школы</p>
           </div>
 
           <div className="mx-auto mb-8 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
             <BentoGridItem
-              title="Каталог: госслужба"
-              description="Промпты и материалы с фильтром для государственной и муниципальной службы."
+              title="Конструктор промптов для госслужащих"
+              description="Промпты для кадровой службы: документооборот, аналитика, найм. Уровень органа подставляется во все шаблоны."
               icon={<ShieldCheck className="h-5 w-5 text-indigo-600" />}
-              className=""
-              onClick={() => navigate('/catalog?type=prompt&audience=gossluzhba')}
+              className={bentoPromptHover}
+              onClick={() => navigate('/manager/hr-gov-prompt-builder')}
             />
             <BentoGridItem
-              title="Каталог: образование"
-              description="Промпты для педагогов, методистов и сопровождения урока."
+              title="Конструктор материалов для учителя"
+              description="Урок, задание, рабочий лист и интерактив — один профиль класса и эталонные промпты с проверкой согласованности."
               icon={<GraduationCap className="h-5 w-5 text-blue-600" />}
-              className=""
-              onClick={() => navigate('/catalog?type=prompt&audience=obrazovanie')}
+              className={bentoPromptHover}
+              onClick={() => navigate('/teacher/material-builder')}
             />
           </div>
 
