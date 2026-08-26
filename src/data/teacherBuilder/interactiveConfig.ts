@@ -37,7 +37,7 @@ export const TEACHER_INTERACTIVE_QUICK_PRESETS: SpaQuickPreset[] = [
     meta: {
       role: 'ученика (тренажёр, самопроверка)',
       goal: 'обучение и проверка знаний',
-      complexity: 'простая (базовый функционал, 1–2 блока)',
+      complexity: 'простая (базовые функции, мало блоков)',
     },
   },
   {

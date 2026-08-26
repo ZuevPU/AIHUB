@@ -33,18 +33,33 @@ export function TeacherInteractivePanel({ interactive }: TeacherInteractivePanel
         <div className="space-y-5">
           <div>
             <p className={siteUi.fieldLabel}>Быстрый старт</p>
+            <p className="mb-2 text-xs text-zinc-500">
+              Выбирает категорию и один тип. Список типов ниже остаётся полным: «Тест» и «Карточки» — все типы
+              образования, «Найди пару» и «Своя игра» — все типы игр.
+            </p>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-              {TEACHER_INTERACTIVE_QUICK_PRESETS.map((preset) => (
-                <button
-                  key={preset.id}
-                  type="button"
-                  onClick={() => interactive.applyPreset(preset)}
-                  className={cn(siteUi.bentoPromptCard, 'border-2 border-zinc-200 p-4 hover:scale-100')}
-                >
-                  <span className="font-semibold text-zinc-900">{preset.label}</span>
-                  <span className="mt-1 block text-sm text-zinc-500">{preset.description}</span>
-                </button>
-              ))}
+              {TEACHER_INTERACTIVE_QUICK_PRESETS.map((preset) => {
+                const isActive = interactive.category === preset.category && interactive.type === preset.type;
+                return (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    aria-pressed={isActive}
+                    onClick={() => interactive.applyPreset(preset)}
+                    className={cn(
+                      siteUi.bentoPromptCard,
+                      'border-2 p-4 hover:scale-100',
+                      isActive ? 'border-blue-500 bg-blue-50' : 'border-zinc-200'
+                    )}
+                  >
+                    <span className="font-semibold text-zinc-900">{preset.label}</span>
+                    <span className="mt-1 block text-sm text-zinc-500">{preset.description}</span>
+                    <span className="mt-2 block text-xs text-zinc-400">
+                      {preset.category === 'education' ? 'Образование' : 'Игры'}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
           <div>
@@ -69,17 +84,9 @@ export function TeacherInteractivePanel({ interactive }: TeacherInteractivePanel
             </div>
           </div>
           <div>
-            <p className={siteUi.fieldLabel}>
-              Тип приложения
-              <span className="ml-2 normal-case font-normal text-zinc-400">
-                (сложность:{' '}
-                {interactive.complexityKey === 'simple'
-                  ? 'простая'
-                  : interactive.complexityKey === 'medium'
-                    ? 'средняя'
-                    : 'высокая'}
-                )
-              </span>
+            <p className={siteUi.fieldLabel}>Тип приложения</p>
+            <p className="mb-2 text-xs text-zinc-500">
+              Все типы выбранной категории. Сложность в блоке ниже не убирает «Свою игру», «Миллионера» или кликер.
             </p>
             <div className="grid max-h-[420px] grid-cols-1 gap-2 overflow-y-auto pr-1 sm:grid-cols-2">
               {interactive.availableTypes.map((item) => (

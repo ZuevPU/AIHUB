@@ -286,7 +286,7 @@ export const spaPromptSections: SpaPromptSection[] = [
     id: 'complexity',
     label: 'Сложность реализации',
     icon: '🟡',
-    why: 'Согласовано с объёмом секций и функций в одном файле.',
+    why: 'Задаёт объём кода в промпте. Не скрывает типы приложений: «Своя игра» и «Миллионер» остаются в списке Игр на любой сложности.',
     fields: [
       {
         id: 'complexity',
@@ -332,11 +332,17 @@ export function getComplexityKeyFromMeta(complexityText: string): 'simple' | 'me
   return complexityTextToKey(complexityText);
 }
 
+export const COMPLEXITY_OPTION_TEXT: Record<'simple' | 'medium' | 'complex', string> = {
+  simple: 'простая (базовые функции, мало блоков)',
+  medium: 'средняя (расширенные функции, 3–5 блоков)',
+  complex: 'высокая (полный функционал, много секций)',
+};
+
+/** Список типов категории всегда полный. Сложность не прячет карточки. */
 export function filterArtifactTypesByComplexity<
   T extends { id: string; complexity: ('simple' | 'medium' | 'complex')[] },
->(types: T[], key: 'simple' | 'medium' | 'complex'): T[] {
-  const filtered = types.filter((t) => t.complexity.includes(key));
-  return filtered.length > 0 ? filtered : types;
+>(types: T[]): T[] {
+  return types;
 }
 
 const TYPE_ACCEPTANCE_HINT: Partial<Record<string, string>> = {

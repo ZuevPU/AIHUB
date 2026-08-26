@@ -11,8 +11,6 @@ import {
   getTemplateOptionKeysForUi,
   SPA_QUICK_PRESETS,
   SPA_UI_STYLE_PRESETS,
-  getComplexityKeyFromMeta,
-  filterArtifactTypesByComplexity,
 } from '@/data/promptBuilderSpaConfig';
 import { DEVELOPER_ALGORITHM_STEPS, SERVICE_LINKS } from '@/data/serviceLinks';
 import { randomizeSelectionsFromSections } from '@/data/promptBuilder/shared';
@@ -48,14 +46,7 @@ export function DeveloperSinglePagePage() {
   };
 
   const categoryData = artifactsConfig.categories.find((item) => item.id === category);
-  const complexityKey = useMemo(() => {
-    const text = metaCustom.complexity?.trim() || metaSelections.complexity || '';
-    return getComplexityKeyFromMeta(text);
-  }, [metaCustom.complexity, metaSelections.complexity]);
-  const availableTypes = useMemo(() => {
-    const all = categoryData?.types ?? [];
-    return filterArtifactTypesByComplexity(all, complexityKey);
-  }, [categoryData?.types, complexityKey]);
+  const availableTypes = useMemo(() => categoryData?.types ?? [], [categoryData?.types]);
   const typeData = availableTypes.find((item) => item.id === type) ?? categoryData?.types.find((item) => item.id === type);
 
   useEffect(() => {
@@ -260,11 +251,10 @@ export function DeveloperSinglePagePage() {
                 />
               </div>
               <div>
-                <p className={siteUi.fieldLabel}>
-                  Тип артефакта
-                  <span className="ml-2 normal-case font-normal text-zinc-400">
-                    (фильтр по сложности: {complexityKey === 'simple' ? 'простая' : complexityKey === 'medium' ? 'средняя' : 'высокая'})
-                  </span>
+                <p className={siteUi.fieldLabel}>Тип артефакта</p>
+                <p className="mb-2 text-xs text-zinc-500">
+                  Полный список выбранной категории. Сложность ниже задаёт объём промпта и не скрывает типы: в «Играх»
+                  всегда есть «Своя игра», «Миллионер», «Битва знаний», кликер и «Найди пару».
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[420px] overflow-y-auto pr-1">
                   {availableTypes.map((item) => (

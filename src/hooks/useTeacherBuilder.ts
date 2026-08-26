@@ -16,8 +16,6 @@ import {
   type TeacherProfile,
 } from '@/data/teacherBuilder';
 import {
-  getComplexityKeyFromMeta,
-  filterArtifactTypesByComplexity,
   getTemplateOptionKeysForUi,
   SPA_DEFAULT_TEMPLATE_OPTIONS,
 } from '@/data/promptBuilderSpaConfig';
@@ -68,15 +66,7 @@ export function useTeacherBuilder() {
     [interactiveCategory]
   );
 
-  const complexityKey = useMemo(() => {
-    const text = interactiveMetaCustom.complexity?.trim() || interactiveMeta.complexity || '';
-    return getComplexityKeyFromMeta(text);
-  }, [interactiveMetaCustom.complexity, interactiveMeta.complexity]);
-
-  const availableInteractiveTypes = useMemo(() => {
-    const all = categoryData?.types ?? [];
-    return filterArtifactTypesByComplexity(all, complexityKey);
-  }, [categoryData?.types, complexityKey]);
+  const availableInteractiveTypes = useMemo(() => categoryData?.types ?? [], [categoryData?.types]);
 
   const interactiveTypeData = useMemo(
     () =>
@@ -240,7 +230,9 @@ export function useTeacherBuilder() {
   const setInteractiveCategoryId = useCallback((id: TeacherInteractiveCategoryId) => {
     const cat = artifactsConfig.categories.find((c) => c.id === id);
     setInteractiveCategory(id);
-    setInteractiveType(cat?.types[0]?.id ?? 'quiz');
+    setInteractiveType((prev) =>
+      cat?.types.some((t) => t.id === prev) ? prev : (cat?.types[0]?.id ?? 'quiz')
+    );
   }, []);
 
   const applyInteractivePreset = useCallback(
@@ -250,7 +242,7 @@ export function useTeacherBuilder() {
       style: string;
       meta: Record<string, string>;
     }) => {
-      setInteractiveCategoryId(preset.category as TeacherInteractiveCategoryId);
+      setInteractiveCategory(preset.category as TeacherInteractiveCategoryId);
       setInteractiveType(preset.type);
       setInteractiveStyle(preset.style);
       setInteractiveStyleCustom('');
@@ -258,7 +250,7 @@ export function useTeacherBuilder() {
       setInteractiveMetaCustom({});
       setInteractiveEnhance(true);
     },
-    [setInteractiveCategoryId]
+    []
   );
 
   const resetCurrentEntity = useCallback(() => {
@@ -344,7 +336,6 @@ export function useTeacherBuilder() {
       setTemplateOptions: setInteractiveTemplateOptions,
       templateKeys: interactiveTemplateKeys,
       availableTypes: availableInteractiveTypes,
-      complexityKey,
       enhance: interactiveEnhance,
       setEnhance: setInteractiveEnhance,
       getMetaValue: getInteractiveMetaValue,
